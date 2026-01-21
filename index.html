@@ -25,9 +25,18 @@
     .blurred{
       filter:blur(12px) brightness(.7);-webkit-filter:blur(12px) brightness(.7);transform:scale(.95);cursor:pointer;transition:.3s;border-radius:8px;
     }
-    .blurred:hover{filter:blur(6px);}
-    .dark{font-style:italic;color:#aaa;}
-    footer{background:#000;padding:30px 20px;font-size:.9em;color:#666;}
+    .blurred{
+  max-width:100%;
+  height:auto;
+  filter:blur(12px) brightness(.7);
+  -webkit-filter:blur(12px) brightness(.7);
+  transform:scale(.95);
+  cursor:pointer;
+  transition:.3s;
+  border-radius:8px;
+}
+video.blurred{width:100%; max-width:640px;}
+
     
     /* Contador regressivo */
     #timer{
