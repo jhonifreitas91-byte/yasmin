@@ -1,212 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Yasmin Miahira – Ajude quem perdeu tudo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    :root{
-      --bg:#0a0a0a;
-      --txt:#f1f1f1;
-      --accent:#ff0044;
-      --gold:#ffb700;
-      --roxo:#6a0dad;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
-    body{background:var(--bg);color:var(--txt);line-height:1.5;}
-    section{padding:60px 20px;max-width:800px;margin:auto;text-align:center;}
-    h1{font-size:2.4em;color:var(--accent);margin-bottom:20px;}
-    h2{font-size:1.8em;color:var(--gold);margin:20px 0 10px;}
-    p{margin-bottom:15px;font-size:1.1em;}
-    .btn{
-      display:inline-block;background:var(--accent);color:#fff;padding:16px 32px;font-size:1.2em;font-weight:bold;border:none;border-radius:4px;cursor:pointer;text-decoration:none;margin-top:20px;transition:.3s;
-    }
-    .btn:hover{background:#e6003a;}
-    .blurred{
-      filter:blur(12px) brightness(.7);-webkit-filter:blur(12px) brightness(.7);transform:scale(.95);cursor:pointer;transition:.3s;border-radius:8px;
-    }
-    .blurred{
-  max-width:100%;
-  height:auto;
-  filter:blur(12px) brightness(.7);
-  -webkit-filter:blur(12px) brightness(.7);
-  transform:scale(.95);
-  cursor:pointer;
-  transition:.3s;
-  border-radius:8px;
-}
-video.blurred{width:100%; max-width:640px;}
-
-    
-    /* Contador regressivo */
-    #timer{
-      position:fixed;top:0;left:0;right:0;background:var(--accent);color:#fff;padding:10px;font-size:1.2em;font-weight:bold;z-index:9999;
-    }
-    
-    /* Pop-up de compra */
-    #popup{
-      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;border:2px solid var(--accent);padding:30px;border-radius:8px;display:none;z-index:9999;max-width:400px;
-    }
-    #popup h3{color:var(--gold);margin-bottom:15px;}
-    #popup .btn{width:100%;}
-    
-    /* Barra de parcelamento */
-    #parcela{
-      position:fixed;bottom:0;left:0;right:0;background:var(--roxo);color:#fff;padding:15px;font-size:1.1em;font-weight:bold;z-index:9999;
-    }
-    
-    /* Botão piscante */
-    @keyframes piscar{
-      0%,100%{background:var(--accent);}
-      50%{background:#cc0033;}
-    }
-    .btn-piscar{animation:piscar 1s infinite;}
-    
-    /* Depoimentos */
-    .depoimento{
-      background:#111;border-left:4px solid var(--gold);padding:15px;margin:15px 0;text-align:left;font-style:italic;
-    }
-    .depoimento small{color:#888;display:block;margin-top:10px;}
-    
-    /* Formas de pagamento */
-    .pagamento{
-      display:flex;justify-content:center;gap:20px;margin:20px 0;flex-wrap:wrap;
-    }
-    .pagamento img{height:30px;filter:grayscale(1) invert(1);}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔓</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111;color:#fff;font:14px Arial;display:flex;justify-content:center;align-items:center;height:100vh}
+#chat{width:100%;max-width:420px;height:100%;max-height:740px;background:#000;display:flex;flex-direction:column}
+#log{flex:1;padding:12px;overflow-y:auto}
+.msg{margin:4px 0;display:flexbox}
+.them{background:#222;padding:8px 12px;border-radius:0 14px 14px 14px;max-width:70%}
+.me{background:#005fff;padding:8px 12px;border-radius:14px 0 14px 14px;margin-left:auto}
+.typing{font-size:12px;color:#aaa;margin:4px 0}
+#mic{width:28px;height:28px;background:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIGZpbGw9IiNmZmYiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdCBkPSJNMTIgMTR2MmE2IDYgMCAwIDAtNiA2aDJhOCA4IDAgMCAwIDgtOHYtMmgtMnptLTQgNGEyIDIgMCAwIDEgMi0ydjJhMiAyIDAgMC0yIDJ2LTJ6Ii8+PC9zdmc+') no-repeat center;background-size:70%}
+.audio-block{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#222;border-radius:18px;width:180px}
+audio::-webkit-media-controls-panel{background-color:#222}
+#payBtn{background:#00d4aa;color:#000;border:0;padding:14px;width:100%;font-size:18px;cursor:pointer}
+.hide{display:none}
+</style>
 </head>
 <body>
-
-  <!-- Contador regressivo -->
-  <div id="timer">⏱️ Faltam <span id="minutos">14</span>:<span id="segundos">59</span> ou o preço TRIPLICA</div>
-
-  <!-- INTRO – O CHOQUE -->
-  <section>
-    <h1>TUDO FOI EMBORA NA LAMA</h1>
-    <div style="text-align:center; margin-top:2rem;">
-    <img src="perfil.jpg" alt="Imagem ilustrativa" style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
+<div id="chat">
+  <div id="log"></div>
 </div>
-    <p class="dark">22 anos. Órfã desde os 16. Morava sozinha numa casinha alugada que chamava de lar.</p>
-    <p>Na última chuva o rio invadiu tudo: colchão, geladeira, fotos dos pais, o sofá que ela economizou 8 meses para comprar. <strong>Perdeu tudo de novo.</strong></p>
-    <!-- vídeo da casa alagada -->
-    <video width="100%" controls poster="poster01.jpg">
-      <source src="alagamento.mp4" type="video/mp4">
-    </video>
-    <p>A prefeitura deu um colchão de campanha. O resto <em>é silêncio e dívidas.</em></p>
-  </section>
 
-  <!-- GATILHO – A DECISÃO -->
-  <section style="background:#111;">
-    <h2>O corpo virou moeda</h2>
-    <p>Yasmin nunca posou nua. Hoje o espelho mostra uma mulher que precisa recomeçar <strong>com o que tem:</strong> 22 anos, pele macia, seios naturais e a internet.</p>
-    <p>Ela criou um pack. Fotos e vídeos que nenhum ex-namorado jamais viu. <br><strong>Tudo inédito. Tudo explícito.</strong></p>
-    <p>Não é só pornô. É sobrevivência com lubrificante.</p>
-  </section>
+<script>
+const log=document.getElementById('log');
+const fotos=['foto1.jpg','foto2.jpg'];
+const audios=['audio1.mp3','audio2.mp3'];
 
-  <!-- PRÉ-VIAS – CENSURA SUGESTIVA -->
-  <section>
-    <h2>CLIQUE NAS IMAGENS PARA VISUALIZAR</h2>
-    <p style="color:var(--gold);">Prévias do que te aguarda no pack (18+)</p>
+function add(msg,cl='them'){
+  const d=document.createElement('div');
+  d.className='msg '+cl;
+  d.innerHTML=msg;
+  log.appendChild(d);
+  log.scrollTop=log.scrollHeight;
+}
+function typing(){
+  const t=document.createElement('div');
+  t.className='typing';
+  t.id='typing';
+  t.textContent='...';
+  log.appendChild(t);
+  log.scrollTop=log.scrollHeight;
+  return t;
+}
 
-    <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
-      <img src="imagem1.jpg" class="blurred" alt="Preview 1">
-      <img src="imagem2.jpg" class="blurred" alt="Preview 2">
-      <img src="imagem3.jpg" class="blurred" alt="Preview 3">
-      <img src="imagem4.jpg" class="blurred" alt="Preview 4">
-    </div>
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
-    <video class="blurred" width="100%" controls style="margin-top:20px;" poster="thumb.jpg">
-  <source src="video1.mp4" type="video/mp4">
-</video>
-
-
-    <p style="margin-top:15px;">+ 47 fotos sem censura <br>+ 6 vídeos exclusivos (squirt, anal plug, dildo ride) <br>+ Face visível em todos – <strong>ela não esconde a vergonha, vende.</strong></p>
-  </section>
-
-  <!-- DEPOIMENTOS FALSOS -->
-  <section style="background:#111;">
-    <h2>Quem já comprou, gozou e ainda ajudou</h2>
-    <div class="depoimento">
-      “Cara, achei que era golpe, mas é real. O pack é mais explícito que muito OnlyFans famoso. Yasmin é linda e o corpo é perfeito. Vale cada centavo!” – <small>Marcos, SP</small>
-    </div>
-    <div class="depoimento">
-      “Comprei na madrugada, recebi na hora. A qualidade das fotos é profissional e os vídeos... meu deus, a cena do espelho é de enlouquecer.” – <small>Rafael, RJ</small>
-    </div>
-    <div class="depoimento">
-      “Gastei mais em uma cerveja no bar. Aqui eu gozei, ajudei e ainda fiquei com material pra sempre.” – <small>Lucas, RS</small>
-    </div>
-  </section>
-
-  <!-- GARANTIA E BONECAS -->
-  <section>
-    <h2>Garantia “goza ou devolvo”</h2>
-    <p>Se você não conseguir gozar em 24 h com esse pack, <strong>devolveemos 100% do seu dinheiro</strong> – e você ainda fica com o material. <br><small>(Ninguém nunca pediu reembolso)</small></p>
-    
-    <h2 style="margin-top:30px;">Bônus por tempo limitado</h2>
-    <p>✓ +3 vídeos inéditos de gozada facial <br>✓ Acesso vitaliano ao “closet de pés” (fetiche que vende sozinho) <br>✓ Fotos com namoradinha – <strong>elas só se beijam pra você</strong></p>
-  </section>
-
-  <!-- FORMAS DE PAGAMENTO -->
-  <section style="background:#111;">
-    <h2>Pague como quiser</h2>
-    <div class="pagamento">
-      <img src="forma1.jpg" alt="Visa">
-      <img src="forma2.jpg" alt="Master">
-      <img src="forma3.jpg" alt="Hiper">
-      <img src="forma4.jpg" alt="Boleto">
-      <img src="forma5.jpg" alt="Pix">
-    </div>
-    <p>Parcele em até <strong>12x</strong> ou pague via Pix e receba na hora.</p>
-  </section>
-
-  <!-- ÚLTIMO APELO – FACA NO CORAÇÃO -->
-  <section style="background:#000;">
-    <h1 style="color:var(--gold);">R$ 14,90 salva alguém hoje</h1>
-    <p>O valor não paga a reforma, <strong>mas compra o primeiro fogão.</strong></p>
-    <p>Você vai bater punheta de qualquer jeho. <br><strong>A diferença é que essa gozada reconstrói uma casa.</strong></p>
-    <p>Escolha: sentir pena depois do orgasmo, ou sentir que o seu fetiche virou tijolo.</p>
-
-    <a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1677953348672&store=16779" class="btn btn-piscar">COMPRAR PACK AGORA →</a>
-
-    <p style="margin-top:30px;font-size:.9em;color:#777;">Pagamento via Kiwify – discrição total no extrato <br>Acesso instantâneo via Telegram ou Whatsapp (sem nome no pacote)</p>
-  </section>
-
-  <!-- PARCELA FIXA -->
-  <div id="parcela">
-    🔥 Comprando agora <strong>você também tera acesso </strong> ao meu whatsapp pessoal! » <a href="#pack" style="color:var(--gold);">Aproveite agora</a>
-  </div>
-
-  <!-- POP-UP DE FUGA -->
-  <div id="popup">
-    <h3>ESPERE! Ganhe 43% de desconto!</h3>
-    <p>Feche agora e pague apenas <strong>R$ 14,90</strong> nesse instante.</p>
-    <a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1677953348672&store=16779" class="btn">PEGAR DESCONTO →</a>
-  </div>
-
-  <footer>
-    Yasmin Miahira agradece – e promete mandar foto do primeiro móvel que conseguir comprar com sua “doação”.
-  </footer>
-
-  <!-- SCRIPTS -->
-  <script>
-    // Contador regressivo
-    let min = 14, seg = 59;
-    setInterval(()=>{
-      if(seg==0){min--;seg=59;} else seg--;
-      document.getElementById('minutos').textContent = min.toString().padStart(2,'0');
-      document.getElementById('segundos').textContent = seg.toString().padStart(2,'0');
-      if(min==0 && seg==0){min=14;seg=59;} // loop infinito
-    },1000);
-
-    // Pop-up de fuga
-    document.addEventListener('mouseleave',e=>{
-      if(e.clientY <= 0) document.getElementById('popup').style.display='block';
-    });
-
-    // Desfoque
-    document.querySelectorAll('.blurred').forEach(el=>{
-      el.addEventListener('click',()=>el.style.filter='none');
-    });
-  </script>
+async function start(){
+  add('Oi, sou eu mesma... tô gravando aqui sozinha no quarto mas não posso ficar muito.');
+  await sleep(2500);
+  add('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
+  await sleep(1800);
+  add('<button onclick="escolhe(true)" style="margin:4px;padding:8px 16px;background:#005fff;border:0;color:#fff;border-radius:20px;cursor:pointer">Sim, quero ver</button><button onclick="escolhe(false)" style="margin:4px;padding:8px 16px;background:#005fff;border:0;color:#fff;border-radius:20px;cursor:pointer">Claro, quero ver</button>','them');
+}
+async function escolhe(dummy){
+  document.querySelectorAll('button').forEach(b=>b.disabled=true);
+  /* --- envia as 2 fotos --- */
+  for(const f of fotos){
+    const img=new Image();
+    img.src=f;
+    img.style.maxWidth='220px';
+    img.style.borderRadius='12px';
+    const div=document.createElement('div');
+    div.className='msg them';
+    div.appendChild(img);
+    log.appendChild(div);
+    await sleep(600);
+  }
+  await sleep(1200);
+  add('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
+  await sleep(2100);
+  add('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você é só clicar abaixo e adquirir o meu pacote VIP.');
+  await sleep(1500);
+  /* --- digitação + áudios --- */
+  for(const a of audios){
+    const t=typing();
+    await sleep(1200);
+    t.remove();
+    const box=document.createElement('div');
+    box.className='msg them audio-block';
+    box.innerHTML='<div id="mic"></div><audio controls src="'+a+'"></audio>';
+    log.appendChild(box);
+    await sleep(5000);
+  }
+  await sleep(800);
+  add('<b><a href="pagamento.html" style="color:#00d4aa">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
+  await sleep(1000);
+  add('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
+}
+start();
+</script>
 </body>
 </html>
