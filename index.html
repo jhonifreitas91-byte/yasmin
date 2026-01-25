@@ -30,7 +30,7 @@ audio::-webkit-media-controls-panel{background:#202c33}
 <div id="wrap">
   <div id="header">
     <img src="perfil.jpg">
-    <div id="nome">Modelo 🔒</div>
+    <div id="nome">Modelo  🔒</div>
   </div>
   <div id="chat"></div>
   <div id="footer">
@@ -44,108 +44,52 @@ const chat=document.getElementById('chat');
 const input=document.getElementById('msgInput');
 
 function bubble(text,who='them'){
-  const row=document.createElement('div');
-  row.className='msg';
+  const row=document.createElement('div');row.className='msg';
   if(who==='them'){
-    const av=document.createElement('img');
-    av.src='perfil.jpg';
-    av.className='avatar';
-    row.appendChild(av);
+    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
   }
-  const b=document.createElement('div');
-  b.className='bubble '+who;
-  b.innerHTML=text;
-  row.appendChild(b);
-  chat.appendChild(row);
-  chat.scrollTop=chat.scrollHeight;
+  const b=document.createElement('div');b.className='bubble '+who;b.innerHTML=text;
+  row.appendChild(b);chat.appendChild(row);chat.scrollTop=chat.scrollHeight;
 }
-
 function typing(){
-  const t=document.createElement('div');
-  t.className='typing';
-  t.id='typing';
-  t.textContent='...';
-  chat.appendChild(t);
-  chat.scrollTop=chat.scrollHeight;
-  return tanni);
+  const t=document.createElement('div');t.className='typing';t.textContent='...';
+  chat.appendChild(t);chat.scrollTop=chat.scrollHeight;return t;
 }
-
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 async function start(){
+  let t=typing();await sleep(5000);t.remove();
   bubble('Oi, sou eu mesma... tô gravando aqui sozinha no quarto mas não posso ficar muito.');
-  await sleep(2000);
-  let t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
-  await sleep(2000);
-  t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('<button onclick="escolhe()">Sim, quero ver</button><button onclick="escolhe()">Claro, quero ver</button>');
 }
 async function escolhe(){
   document.querySelectorAll('button').forEach(b=>b.disabled=true);
-  /* fotos */
   for(const f of ['foto1.jpg','foto2.jpg']){
-    const img=new Image();
-    img.src=f;
-    img.style.maxWidth='220px';
-    img.style.borderRadius='12px';
-    const row=document.createElement('div');
-    row.className='msg';
-    const av=document.createElement('img');
-    av.src='perfil.jpg';
-    av.className='avatar';
-    row.appendChild(av);
-    const b=document.createElement('div');
-    b.className='bubble them';
-    b.appendChild(img);
-    row.appendChild(b);
-    chat.appendChild(row);
-    chat.scrollTop=chat.scrollHeight;
-    await sleep(600);
+    const img=new Image();img.src=f;img.style.maxWidth='220px';img.style.borderRadius='12px';
+    const row=document.createElement('div');row.className='msg';
+    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
+    const b=document.createElement('div');b.className='bubble them';b.appendChild(img);row.appendChild(b);
+    chat.appendChild(row);chat.scrollTop=chat.scrollHeight;await sleep(600);
   }
-  await sleep(2000);
-  let t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);let t=typing();await sleep(6000);t.remove();
   bubble('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
-  await sleep(2000);
-  t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você, clique abaixo e adquira o meu pacote VIP.');
   await sleep(2000);
-  /* áudios */
   for(const a of ['audio1.mp3','audio2.mp3']){
-    t=typing();
-    await sleep(6000);
-    t.remove();
-    const row=document.createElement('div');
-    row.className='msg';
-    const av=document.createElement('img');
-    av.src='perfil.jpg';
-    av.className='avatar';
-    row.appendChild(av);
-    const box=document.createElement('div');
-    box.className='bubble them audio-block';
-    box.innerHTML='<audio controls src="'+a+'"></audio>';
-    row.appendChild(box);
-    chat.appendChild(row);
-    chat.scrollTop=chat.scrollHeight;
-    await sleep(5000);
+    t=typing();await sleep(6000);t.remove();
+    const row=document.createElement('div');row.className='msg';
+    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
+    const box=document.createElement('div');box.className='bubble them audio-block';
+    box.innerHTML='<audio controls src="'+a+'"></audio>';row.appendChild(box);chat.appendChild(row);
+    chat.scrollTop=chat.scrollHeight;await sleep(5000);
   }
-  await sleep(2000);
-  t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('<b><a href="pagamento.html" style="color:#00d4aa">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
-  await sleep(2000);
-  t=typing();
-  await sleep(6000);
-  t.remove();
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
 }
 start();
