@@ -3,94 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🔓</title>
+<title>Conversa</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#111;color:#fff;font:14px Arial;display:flex;justify-content:center;align-items:center;height:100vh}
-#chat{width:100%;max-width:420px;height:100%;max-height:740px;background:#000;display:flex;flex-direction:column}
-#log{flex:1;padding:12px;overflow-y:auto}
-.msg{margin:4px 0;display:flexbox}
-.them{background:#222;padding:8px 12px;border-radius:0 14px 14px 14px;max-width:70%}
-.me{background:#005fff;padding:8px 12px;border-radius:14px 0 14px 14px;margin-left:auto}
-.typing{font-size:12px;color:#aaa;margin:4px 0}
-#mic{width:28px;height:28px;background:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIGZpbGw9IiNmZmYiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdCBkPSJNMTIgMTR2MmE2IDYgMCAwIDAtNiA2aDJhOCA4IDAgMCAwIDgtOHYtMmgtMnptLTQgNGEyIDIgMCAwIDEgMi0ydjJhMiAyIDAgMC0yIDJ2LTJ6Ii8+PC9zdmc+') no-repeat center;background-size:70%}
-.audio-block{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#222;border-radius:18px;width:180px}
-audio::-webkit-media-controls-panel{background-color:#222}
-#payBtn{background:#00d4aa;color:#000;border:0;padding:14px;width:100%;font-size:18px;cursor:pointer}
-.hide{display:none}
+body{background:#0b141b;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh}
+#wrap{width:100%;max-width:420px;height:100%;max-height:740px;background:#111;display:flex;flex-direction:column;border-radius:0;overflow:hidden}
+#header{background:#202c33;display:flex;align-items:center;padding:8px 12px;gap:12px;color:#fff}
+#header img{width:40px;height:40px;border-radius:50%;object-fit:cover;cursor:pointer}
+#nome{flex:1;font-size:16px}
+#status{font-size:12px;color:#8696a0}
+#chat{flex:1;background:url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...') center/cover;padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.msg{display:flex;align-items:flex-end;gap:6px}
+.bubble{max-width:70%;padding:8px 12px;border-radius:18px;font-size:14px;line-height:1.35}
+.them{background:#202c33;color:#fff;border-bottom-left-radius:4px}
+.me{background:#005fff;color:#fff;border-bottom-right-radius:4px;margin-left:auto}
+.avatar{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.typing{margin-left:34px;font-size:12px;color:#8696a0}
+#footer{background:#202c33;display:flex;align-items:center;padding:8px;gap:8px}
+#msgInput{flex:1;background:#2a3942;border:0;padding:10px 14px;border-radius:24px;color:#fff;font-size:14px}
+#sendBtn{background:#005fff;color:#fff;border:0;padding:10px 14px;border-radius:50%;cursor:pointer}
+.audio-block{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#202c33;border-radius:18px;width:180px}
+audio::-webkit-media-controls-panel{background:#202c33}
 </style>
 </head>
 <body>
-<div id="chat">
-  <div id="log"></div>
+<div id="wrap">
+  <div id="header">
+    <img src="perfil.jpg" id="perfil" onclick="window.open('perfil.jpg')">
+    <div>
+      <div id="nome">Modelo  🔒</div>
+      <div id="status">online</div>
+    </div>
+  </div>
+
+  <div id="chat"></div>
+
+  <div id="footer">
+    <input id="msgInput" placeholder="Digite uma mensagem">
+    <button id="sendBtn" onclick="sendMsg()">➤</button>
+  </div>
 </div>
 
 <script>
-const log=document.getElementById('log');
-const fotos=['foto1.jpg','foto2.jpg'];
-const audios=['audio1.mp3','audio2.mp3'];
+const chat=document.getElementById('chat');
+const input=document.getElementById('msgInput');
 
-function add(msg,cl='them'){
-  const d=document.createElement('div');
-  d.className='msg '+cl;
-  d.innerHTML=msg;
-  log.appendChild(d);
-  log.scrollTop=log.scrollHeight;
+function bubble(text,who='them'){
+  const row=document.createElement('div');
+  row.className='msg';
+  if(who==='them'){
+    const av=document.createElement('img');
+    av.src='perfil.jpg';
+    av.className='avatar';
+    row.appendChild(av);
+  }
+  const b=document.createElement('div');
+  b.className='bubble '+who;
+  b.innerHTML=text;
+  row.appendChild(b);
+  chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
 }
+
 function typing(){
   const t=document.createElement('div');
   t.className='typing';
   t.id='typing';
   t.textContent='...';
-  log.appendChild(t);
-  log.scrollTop=log.scrollHeight;
+  chat.appendChild(t);
+  chat.scrollTop=chat.scrollHeight;
   return t;
 }
 
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 async function start(){
-  add('Oi, sou eu mesma... tô gravando aqui sozinha no quarto mas não posso ficar muito.');
+  bubble('Oi, sou eu mesma... tô gravando aqui sozinha no quarto mas não posso ficar muito.');
   await sleep(2500);
-  add('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
+  bubble('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
   await sleep(1800);
-  add('<button onclick="escolhe(true)" style="margin:4px;padding:8px 16px;background:#005fff;border:0;color:#fff;border-radius:20px;cursor:pointer">Sim, quero ver</button><button onclick="escolhe(false)" style="margin:4px;padding:8px 16px;background:#005fff;border:0;color:#fff;border-radius:20px;cursor:pointer">Claro, quero ver</button>','them');
 }
-async function escolhe(dummy){
-  document.querySelectorAll('button').forEach(b=>b.disabled=true);
-  /* --- envia as 2 fotos --- */
-  for(const f of fotos){
+async function sendMsg(){
+  const txt=input.value.trim();
+  if(!txt) return;
+  bubble(txt,'me');
+  input.value='';
+  /* --- resposta da modelo --- */
+  const t=typing();
+  await sleep(1200);
+  t.remove();
+  /* fotos */
+  for(const f of ['foto1.jpg','foto2.jpg']){
     const img=new Image();
     img.src=f;
     img.style.maxWidth='220px';
     img.style.borderRadius='12px';
-    const div=document.createElement('div');
-    div.className='msg them';
-    div.appendChild(img);
-    log.appendChild(div);
+    const row=document.createElement('div');
+    row.className='msg';
+    const av=document.createElement('img');
+    av.src='perfil.jpg';
+    av.className='avatar';
+    row.appendChild(av);
+    const b=document.createElement('div');
+    b.className='bubble them';
+    b.appendChild(img);
+    row.appendChild(b);
+    chat.appendChild(row);
+    chat.scrollTop=chat.scrollHeight;
     await sleep(600);
   }
   await sleep(1200);
-  add('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
+  bubble('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
   await sleep(2100);
-  add('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você é só clicar abaixo e adquirir o meu pacote VIP.');
+  bubble('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você, clique abaixo e adquira o meu pacote VIP.');
   await sleep(1500);
-  /* --- digitação + áudios --- */
-  for(const a of audios){
+  /* áudios */
+  for(const a of ['audio1.mp3','audio2.mp3']){
     const t=typing();
     await sleep(1200);
     t.remove();
+    const row=document.createElement('div');
+    row.className='msg';
+    const av=document.createElement('img');
+    av.src='perfil.jpg';
+    av.className='avatar';
+    row.appendChild(av);
     const box=document.createElement('div');
-    box.className='msg them audio-block';
-    box.innerHTML='<div id="mic"></div><audio controls src="'+a+'"></audio>';
-    log.appendChild(box);
+    box.className='bubble them audio-block';
+    box.innerHTML='<audio controls src="'+a+'"></audio>';
+    row.appendChild(box);
+    chat.appendChild(row);
+    chat.scrollTop=chat.scrollHeight;
     await sleep(5000);
   }
   await sleep(800);
-  add('<b><a href="pagamento.html" style="color:#00d4aa">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
+  bubble('<b><a href="pagamento.html" style="color:#00d4aa">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
   await sleep(1000);
-  add('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
+  bubble('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
 }
+/* inicia conversa */
 start();
 </script>
 </body>
