@@ -2,25 +2,25 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>Conversa</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0b141b;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh}
-#wrap{width:100%;max-width:420px;height:100%;max-height:740px;background:#111;display:flex;flex-direction:column;border-radius:0;overflow:hidden}
+html,body{height:100%}
+body{background:#111;font-family:Arial;display:flex;justify-content:center;align-items:center}
+#wrap{width:100%;max-width:420px;height:100%;background:#000;display:flex;flex-direction:column}
 #header{background:#202c33;display:flex;align-items:center;padding:8px 12px;gap:12px;color:#fff}
-#header img{width:40px;height:40px;border-radius:50%;object-fit:cover;cursor:pointer}
+#header img{width:40px;height:40px;border-radius:50%}
 #nome{flex:1;font-size:16px}
-#status{font-size:12px;color:#8696a0}
-#chat{flex:1;background:url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...') center/cover;padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+#chat{flex:1;padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .msg{display:flex;align-items:flex-end;gap:6px}
-.bubble{max-width:70%;padding:8px 12px;border-radius:18px;font-size:14px;line-height:1.35}
+.bubble{max-width:70%;padding:8px 12px;border-radius:18px;font-size:14px}
 .them{background:#202c33;color:#fff;border-bottom-left-radius:4px}
 .me{background:#005fff;color:#fff;border-bottom-right-radius:4px;margin-left:auto}
-.avatar{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.avatar{width:28px;height:28px;border-radius:50%}
 .typing{margin-left:34px;font-size:12px;color:#8696a0}
-#footer{background:#202c33;display:flex;align-items:center;padding:8px;gap:8px}
-#msgInput{flex:1;background:#2a3942;border:0;padding:10px 14px;border-radius:24px;color:#fff;font-size:14px}
+#footer{background:#202c33;display:flex;align-items:center;padding:8px;gap:8px;position:sticky;bottom:0}
+#msgInput{flex:1;background:#2a3942;border:0;padding:10px 14px;border-radius:24px;color:#fff;font-size:16px}
 #sendBtn{background:#005fff;color:#fff;border:0;padding:10px 14px;border-radius:50%;cursor:pointer}
 .audio-block{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#202c33;border-radius:18px;width:180px}
 audio::-webkit-media-controls-panel{background:#202c33}
@@ -29,15 +29,10 @@ audio::-webkit-media-controls-panel{background:#202c33}
 <body>
 <div id="wrap">
   <div id="header">
-    <img src="perfil.jpg" id="perfil" onclick="window.open('perfil.jpg')">
-    <div>
-      <div id="nome">Modelo  🔒</div>
-      <div id="status">online</div>
-    </div>
+    <img src="perfil.jpg">
+    <div id="nome">Modelo 🔒</div>
   </div>
-
   <div id="chat"></div>
-
   <div id="footer">
     <input id="msgInput" placeholder="Digite uma mensagem">
     <button id="sendBtn" onclick="sendMsg()">➤</button>
@@ -72,26 +67,26 @@ function typing(){
   t.textContent='...';
   chat.appendChild(t);
   chat.scrollTop=chat.scrollHeight;
-  return t;
+  return tanni);
 }
 
 function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 
 async function start(){
   bubble('Oi, sou eu mesma... tô gravando aqui sozinha no quarto mas não posso ficar muito.');
-  await sleep(2500);
-  bubble('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
-  await sleep(1800);
-}
-async function sendMsg(){
-  const txt=input.value.trim();
-  if(!txt) return;
-  bubble(txt,'me');
-  input.value='';
-  /* --- resposta da modelo --- */
-  const t=typing();
-  await sleep(1200);
+  await sleep(2000);
+  let t=typing();
+  await sleep(6000);
   t.remove();
+  bubble('Meu noivo chega em 20 min. Tem interesse em ver as fotos que eu tirei?');
+  await sleep(2000);
+  t=typing();
+  await sleep(6000);
+  t.remove();
+  bubble('<button onclick="escolhe()">Sim, quero ver</button><button onclick="escolhe()">Claro, quero ver</button>');
+}
+async function escolhe(){
+  document.querySelectorAll('button').forEach(b=>b.disabled=true);
   /* fotos */
   for(const f of ['foto1.jpg','foto2.jpg']){
     const img=new Image();
@@ -112,15 +107,21 @@ async function sendMsg(){
     chat.scrollTop=chat.scrollHeight;
     await sleep(600);
   }
-  await sleep(1200);
+  await sleep(2000);
+  let t=typing();
+  await sleep(6000);
+  t.remove();
   bubble('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
-  await sleep(2100);
+  await sleep(2000);
+  t=typing();
+  await sleep(6000);
+  t.remove();
   bubble('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você, clique abaixo e adquira o meu pacote VIP.');
-  await sleep(1500);
+  await sleep(2000);
   /* áudios */
   for(const a of ['audio1.mp3','audio2.mp3']){
-    const t=typing();
-    await sleep(1200);
+    t=typing();
+    await sleep(6000);
     t.remove();
     const row=document.createElement('div');
     row.className='msg';
@@ -136,12 +137,17 @@ async function sendMsg(){
     chat.scrollTop=chat.scrollHeight;
     await sleep(5000);
   }
-  await sleep(800);
+  await sleep(2000);
+  t=typing();
+  await sleep(6000);
+  t.remove();
   bubble('<b><a href="pagamento.html" style="color:#00d4aa">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
-  await sleep(1000);
+  await sleep(2000);
+  t=typing();
+  await sleep(6000);
+  t.remove();
   bubble('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
 }
-/* inicia conversa */
 start();
 </script>
 </body>
