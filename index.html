@@ -1,3 +1,4 @@
+html
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -7,34 +8,34 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 :root{
-  --bg:#0a0a0a;
-  --bg-chat:#0f0f0f;
-  --bubble-them:#2a0f3a;
-  --bubble-me:#ff0055;
-  --text:#fff;
-  --sub:#ff66a3;
-  --typing:#ff66a3;
-  --border:#ff0055;
-  --shadow:0 0 12px #ff005588
+  --bg:0a0a0a;
+  --bg-chat:0f0f0f;
+  --bubble-them:2a0f3a;
+  --bubble-me:ff0055;
+  --text:fff;
+  --sub:ff66a3;
+  --typing:ff66a3;
+  --border:ff0055;
+  --shadow:0 0 12px ff005588
 }
-*{box-sizing:border-box;margin:0;padding:0}
+{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:var(--bg);font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center}
-#wrap{width:100%;max-width:420px;height:100%;background:var(--bg);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column}
-#header{background:#1a1a1a;display:flex;align-items:center;padding:10px 14px;gap:12px;color:var(--text);flex-shrink:0}
-#header img{width:44px;height:44px;border-radius:50%;border:2px solid var(--border)}
-#nome{flex:1;font-size:17px;font-weight:600}
-#chat{flex:1 1 auto;background:var(--bg-chat) url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity=".05"%3E%3Cfilter id="a"%3E%3CfeTurbulence baseFrequency=".8" numOctaves="1" /%3E%3C/filter%3E%3Crect width="100" height="100" filter="url(%23a)" opacity=".4"/%3E%3C/svg%3E');padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+wrap{width:100%;max-width:420px;height:100%;background:var(--bg);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column}
+header{background:1a1a1a;display:flex;align-items:center;padding:10px 14px;gap:12px;color:var(--text);flex-shrink:0}
+header img{width:44px;height:44px;border-radius:50%;border:2px solid var(--border)}
+nome{flex:1;font-size:17px;font-weight:600}
+chat{flex:1 1 auto;background:var(--bg-chat) url('data:image/svg+xml,%3Csvg xmlns="http://wwwfnp;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
 .msg{display:flex;align-items:flex-end;gap:6px}
 .bubble{max-width:72%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.35;box-shadow:var(--shadow)}
 .them{background:var(--bubble-them);color:var(--text);border-bottom-left-radius:6px}
-.me{background:var(--bubble-me);color:#fff;border-bottom-right-radius:6px;margin-left:auto}
+.me{background:var(--bubble-me);color:fff;border-bottom-right-radius:6px;margin-left:auto}
 .avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--border)}
 .typing{margin-left:38px;font-size:28px;font-weight:700;color:var(--typing);letter-spacing:.2em;animation:blink 1s infinite}
 @keyframes blink{50%{opacity:0}}
-#footer{background:#1a1a1a;display:flex;align-items:center;padding:10px;gap:10px;position:sticky;bottom:0;flex-shrink:0}
-#msgInput{flex:1;background:#2a0f3a;border:1px solid var(--border);padding:12px 16px;border-radius:24px;color:var(--text);font-size:16px}
-#sendBtn{background:var(--bubble-me);color:#fff;border:0;padding:12px 14px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:var(--shadow)}
+footer{background:1a1a1a;display:flex;align-items:center;padding:10px;gap:10px;position:sticky;bottom:0;flex-shrink:0}
+msgInput{flex:1;background:2a0f3a;border:1px solid var(--border);padding:12px 16px;border-radius:24px;color:var(--text);font-size:16px}
+sendBtn{background:var(--bubble-me);color:fff;border:0;padding:12px 14px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:var(--shadow)}
 .audio-block{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bubble-them);border-radius:18px;width:200px}
 audio::-webkit-media-controls-panel{background:var(--bubble-them)}
 </style>
@@ -124,7 +125,52 @@ async function mostraConteudo(){
   const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
   const box=document.createElement('div');box.className='bubble them audio-block';
   box.innerHTML='<audio controls src="audio3.mp3"></audio>';row.appendChild(box);chat.appendChild(row);
-  chat.scrollTop=chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;await sleep(5000);
+
+  // SEGUNDO ÁUDIO (audio4)
+  t=typing();await sleep(6000);t.remove();
+  const row4=document.createElement('div');row4.className='msg';
+  const av4=document.createElement('img');av4.src='perfil.jpg';av4.className='avatar';row4.appendChild(av4);
+  const box4=document.createElement('div');box4.className='bubble them audio-block';
+  box4.innerHTML='<audio controls src="audio4.mp3"></audio>';row4.appendChild(box4);chat.appendChild(row4);
+  chat.scrollTop=chat.scrollHeight;await sleep(5000);
+
+  // MENSAGEM DE CONVITE
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('eai meu gostosão, ta afim de gozar bem gostoso cmg?');
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('<button onclick="finaliza()">Sim</button><button onclick="finaliza()">Claro</button>');
+}
+async function finaliza(){
+  document.querySelectorAll('button').forEach(b=>b.disabled=true);
+  let t=typing();await sleep(6000);t.remove();
+  const row5=document.createElement('div');row5.className='msg';
+  const av5=document.createElement('img');av5.src='perfil.jpg';av5.className='avatar';row5.appendChild(av5);
+  const box5=document.createElement('div');box5.className='bubble them audio-block';
+  box5.innerHTML='<audio controls src="audio5.mp3"></audio>';row5.appendChild(box5);chat.appendChild(row5);
+  chat.scrollTop=chat.scrollHeight;await sleep(5000);
+
+  // LINK DE PAGAMENTO
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('aqui em baixo vou deixar o link pra voce fazer o pagamento ta amor?');
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('<b><a href="<!-- INSIRA_SEU_LINK_AQUI -->" style="color:ff66a3">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('amorzinho, to cobrando um preço bem baratinho, vc ganha e eu ganho, vc vai sair com o pau todo meladinho só de me ver gemendo gostoso.');
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  const row6=document.createElement('div');row6.className='msg';
+  const av6=document.createElement('img');av6.src='perfil.jpg';av6.className='avatar';row6.appendChild(av6);
+  const box6=document.createElement('div');box6.className='bubble them audio-block';
+  box6.innerHTML='<audio controls src="audio6.mp3"></audio>';row6.appendChild(box6);chat.appendChild(row6);
+  chat.scrollTop=chat.scrollHeight;await sleep(5000);
+  t=typing();await sleep(6000);t.remove();
+  const row7=document.createElement('div');row7.className='msg';
+  const av7=document.createElement('img');av7.src='perfil.jpg';av7.className='avatar';row7.appendChild(av7);
+  const box7=document.createElement('div');box7.className='bubble them audio-block';
+  box7.innerHTML='<audio controls src="audio7.mp3"></audio>';row7.appendChild(box7);chat.appendChild(row7);
+  chat.scrollTop=chat.scrollHeight;await sleep(5000);
+  await sleep(2000);t=typing();await sleep(6000);t.remove();
+  bubble('<b><a href="<!-- INSIRA_SEU_LINK_AQUI -->" style="color:ff66a3">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
 }
 start();
 </script>
