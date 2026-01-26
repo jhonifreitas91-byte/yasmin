@@ -43,7 +43,7 @@ audio::-webkit-media-controls-panel{background:var(--bubble-them)}
 <div id="wrap">
   <div id="header">
     <img src="perfil.jpg">
-    <div id="nome">Modelo  🔞</div>
+    <div id="nome">Modelo 🔞</div>
   </div>
   <div id="chat"></div>
   <div id="footer">
@@ -113,29 +113,18 @@ async function escolhe(){
   await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs');
   await sleep(2000);t=typing();await sleep(6000);t.remove();
-  for(const a of ['audio2.mp3']){
-    t=typing();await sleep(6000);t.remove();
-    const row=document.createElement('div');row.className='msg';
-    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
-    const box=document.createElement('div');box.className='bubble them audio-block';
-    box.innerHTML='<audio controls src="'+a+'"></audio>';row.appendChild(box);chat.appendChild(row);
-    chat.scrollTop=chat.scrollHeight;await sleep(5000);
-  }
-
-  // NOVA MENSAGEM + ÁUDIO FINAL
+  bubble('tem interesse em ver meus conteúdos?');
   await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  const rowFinal=document.createElement('div');rowFinal.className='msg';
-  const avFinal=document.createElement('img');avFinal.src='perfil.jpg';avFinal.className='avatar';rowFinal.appendChild(avFinal);
-  const boxFinal=document.createElement('div');boxFinal.className='bubble them audio-block';
-  boxFinal.innerHTML='<audio controls src="audio4.mp3"></audio>';rowFinal.appendChild(boxFinal);
-  chat.appendChild(rowFinal);chat.scrollTop=chat.scrollHeight;
-
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<b><a href="pagamento.html" style="color:#ff66a3">👉 CLIQUE AQUI e garanta seu pack por R$ 19,90</a></b>');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('Aproveita que logo logo eu apago tudo, agora vou sair que meu marido chegou. Beijos, te espero lá!');
+  bubble('<button onclick="mostraConteudo()">Sim, quero muito</button><button onclick="mostraConteudo()">Claro que sim</button>');
+}
+async function mostraConteudo(){
+  document.querySelectorAll('button').forEach(b=>b.disabled=true);
+  let t=typing();await sleep(6000);t.remove();
+  const row=document.createElement('div');row.className='msg';
+  const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
+  const box=document.createElement('div');box.className='bubble them audio-block';
+  box.innerHTML='<audio controls src="audio3.mp3"></audio>';row.appendChild(box);chat.appendChild(row);
+  chat.scrollTop=chat.scrollHeight;
 }
 start();
 </script>
