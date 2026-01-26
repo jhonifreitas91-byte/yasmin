@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Chat</title>
 
 <style>
@@ -33,8 +32,7 @@ padding:10px;
 display:flex;
 gap:10px;
 align-items:center;
-color:#fff;
-flex-shrink:0
+color:#fff
 }
 
 #header img{
@@ -44,10 +42,7 @@ border-radius:50%;
 border:2px solid #ff0055
 }
 
-#status{
-font-size:12px;
-color:#ff66a3
-}
+#status{font-size:12px;color:#ff66a3}
 
 #chat{
 flex:1;
@@ -56,20 +51,13 @@ padding:12px;
 display:flex;
 flex-direction:column;
 gap:10px;
-padding-bottom:80px;
-scroll-behavior:smooth
+padding-bottom:90px
 }
 
-.msg{
-display:flex;
-gap:8px;
-align-items:flex-end
-}
+.msg{display:flex;gap:8px;align-items:flex-end}
 
 .avatar{
-width:30px;
-height:30px;
-border-radius:50%;
+width:30px;height:30px;border-radius:50%;
 border:2px solid #ff0055
 }
 
@@ -78,24 +66,17 @@ padding:10px 14px;
 border-radius:18px;
 max-width:75%;
 color:#fff;
-font-size:15px
+font-size:15px;
+background:#2a0f3a
 }
 
-.them{background:#2a0f3a}
-
-.typing{
-margin-left:38px;
-display:flex;
-gap:6px
-}
+.typing{margin-left:38px;display:flex;gap:6px}
 
 .dot{
-width:10px;
-height:10px;
+width:12px;height:12px;
 background:#ff66a3;
 border-radius:50%;
-animation:jump 1.4s infinite;
-opacity:.3
+animation:jump 1.4s infinite;opacity:.3
 }
 
 .dot:nth-child(2){animation-delay:.2s}
@@ -106,19 +87,11 @@ opacity:.3
 40%{transform:translateY(-6px);opacity:1}
 }
 
-.mic{
-margin-left:38px;
-color:#ff66a3;
-font-size:14px
-}
+.mic{margin-left:38px;color:#ff66a3}
 
 .audio audio{width:200px}
 
-.chat-img{
-max-width:220px;
-border-radius:12px;
-cursor:pointer
-}
+.chat-img{max-width:220px;border-radius:12px}
 
 #footer{
 position:fixed;
@@ -131,18 +104,14 @@ display:flex;
 gap:8px
 }
 
-#msgInput,#sendBtn{
-opacity:.6;
-cursor:not-allowed
-}
-
 #msgInput{
 flex:1;
 background:#2a0f3a;
 border:1px solid #ff0055;
 border-radius:20px;
 padding:12px;
-color:#fff
+color:#fff;
+opacity:.6
 }
 
 #sendBtn{
@@ -150,7 +119,8 @@ background:#ff0055;
 border:0;
 color:white;
 border-radius:50%;
-padding:12px
+padding:12px;
+opacity:.6
 }
 
 button{
@@ -159,26 +129,18 @@ border:0;
 color:white;
 padding:8px 14px;
 border-radius:16px;
-margin:4px;
-cursor:pointer
+margin:4px
 }
 
 #fullscreen{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,.9);
 display:none;
-justify-content:center;
-align-items:center
+justify-content:center;align-items:center
 }
 
-#fullscreen img{
-max-width:90%;
-max-height:90%
-}
+#fullscreen img{max-width:90%;max-height:90%}
 </style>
 </head>
 
@@ -203,9 +165,7 @@ max-height:90%
 
 </div>
 
-<div id="fullscreen" onclick="this.style.display='none'">
-<img>
-</div>
+<div id="fullscreen" onclick="this.style.display='none'"><img></div>
 
 <script>
 
@@ -216,6 +176,25 @@ const link='https://seguro.modelosprivacy.club/api/public/shopify?product=173341
 
 function scroll(){chat.scrollTop=chat.scrollHeight}
 
+function hour(){
+ const d=new Date()
+ return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0")
+}
+
+function seen(){
+ const s=document.createElement("div")
+ s.style.fontSize="11px"
+ s.style.color="#aaa"
+ s.style.marginLeft="38px"
+ s.textContent="Visualizado agora"
+ chat.appendChild(s)
+ scroll()
+}
+
+function bubble(content){
+ return content+`<div style="font-size:11px;color:#ccc;margin-top:4px;text-align:right">${hour()}</div>`
+}
+
 function msg(text){
  const row=document.createElement("div")
  row.className="msg"
@@ -225,13 +204,14 @@ function msg(text){
  av.className="avatar"
 
  const b=document.createElement("div")
- b.className="bubble them"
- b.innerHTML=text
+ b.className="bubble"
+ b.innerHTML=bubble(text)
 
  row.appendChild(av)
  row.appendChild(b)
  chat.appendChild(row)
  scroll()
+ setTimeout(seen,800)
 }
 
 function typing(){
@@ -254,8 +234,25 @@ function mic(){
  return m
 }
 
-function sendAudio(src){
+async function fakeLoad(){
+ const l=document.createElement("div")
+ l.style.marginLeft="38px"
+ l.style.color="#ff66a3"
+ chat.appendChild(l)
+
+ l.innerHTML="Carregando áudio...<br>██░░░░░░░░"
+ await sleep(600)
+ l.innerHTML="Carregando áudio...<br>████░░░░░░"
+ await sleep(600)
+ l.innerHTML="Carregando áudio...<br>██████████"
+ await sleep(500)
+
+ l.remove()
+}
+
+async function sendAudio(src){
  statusTxt.textContent="online agora"
+ await fakeLoad()
 
  const row=document.createElement("div")
  row.className="msg"
@@ -265,13 +262,15 @@ function sendAudio(src){
  av.className="avatar"
 
  const box=document.createElement("div")
- box.className="bubble them audio"
- box.innerHTML=`<audio controls src="${src}"></audio>`
+ box.className="bubble audio"
+ box.innerHTML=`<audio controls src="${src}"></audio>
+ <div style="font-size:11px;color:#ccc;margin-top:4px;text-align:right">${hour()}</div>`
 
  row.appendChild(av)
  row.appendChild(box)
  chat.appendChild(row)
  scroll()
+ setTimeout(seen,800)
 }
 
 function sendPhoto(src){
@@ -290,13 +289,15 @@ function sendPhoto(src){
  img.onclick=()=>openFull(src)
 
  const b=document.createElement("div")
- b.className="bubble them"
+ b.className="bubble"
  b.appendChild(img)
+ b.innerHTML+=`<div style="font-size:11px;color:#ccc;margin-top:4px;text-align:right">${hour()}</div>`
 
  row.appendChild(av)
  row.appendChild(b)
  chat.appendChild(row)
  scroll()
+ setTimeout(seen,800)
 }
 
 function openFull(src){
@@ -305,25 +306,9 @@ function openFull(src){
  fs.querySelector("img").src=src
 }
 
-async function waitText(){
- const t=typing()
- await sleep(5000)
- t.remove()
- statusTxt.textContent="online agora"
-}
-
-async function waitAudio(){
- const m=mic()
- await sleep(10000)
- m.remove()
-}
-
-async function waitImage(){
- const t=typing()
- await sleep(7000)
- t.remove()
- statusTxt.textContent="online agora"
-}
+async function waitText(){const t=typing();await sleep(5000);t.remove()}
+async function waitAudio(){const m=mic();await sleep(10000);m.remove()}
+async function waitImage(){const t=typing();await sleep(7000);t.remove()}
 
 async function start(){
  await waitText()
@@ -339,12 +324,10 @@ async function start(){
 async function choice(){
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
- await waitAudio(); sendAudio("audio1.mp3")
-
+ await waitAudio(); await sendAudio("audio1.mp3")
  await waitImage(); sendPhoto("foto1.jpg")
  await waitImage(); sendPhoto("foto2.jpg")
-
- await waitAudio(); sendAudio("audio2.mp3")
+ await waitAudio(); await sendAudio("audio2.mp3")
 
  await waitText()
  msg("ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs")
@@ -359,8 +342,8 @@ async function choice(){
 async function content(){
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
- await waitAudio(); sendAudio("audio3.mp3")
- await waitAudio(); sendAudio("audio4.mp3")
+ await waitAudio(); await sendAudio("audio3.mp3")
+ await waitAudio(); await sendAudio("audio4.mp3")
 
  await waitText()
  msg("então meu nenem, ta afim de gozar bem gostoso cmg?")
@@ -372,22 +355,22 @@ async function content(){
 async function final(){
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
- await waitAudio(); sendAudio("audio5.mp3")
+ await waitAudio(); await sendAudio("audio5.mp3")
 
  await waitText()
  msg("aqui em baixo vou deixar o link pra voce fazer o pagamento ta amor?")
 
- await waitAudio(); sendAudio("audio6.mp3")
+ await waitAudio(); await sendAudio("audio6.mp3")
 
  await waitText()
  msg(`<b><a style="color:#ff66a3" href="${link}">👉 CLIQUE AQUI</a></b>`)
 
- await waitAudio(); sendAudio("audio7.mp3")
+ await waitAudio(); await sendAudio("audio7.mp3")
 
  await waitText()
  msg(`<b><a style="color:#ff66a3" href="${link}">👉 CLIQUE AQUI</a></b>`)
 
- await waitAudio(); sendAudio("audio8.mp3")
+ await waitAudio(); await sendAudio("audio8.mp3")
 
  await waitText()
  msg("Se você sair agora, vai perder a promoção de hoje. Último aviso, amor:")
