@@ -170,7 +170,25 @@ async function finaliza(){
   chat.scrollTop=chat.scrollHeight;await sleep(5000);
   await sleep(2000);t=typing();await sleep(6000);t.remove();
   bubble('<b><a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334" style="color:ff66a3">👉 CLIQUE AQUI</a></b>');
+  
+  // ÁUDIO 8 – “último chamado”
+  await sleep(2000);
+  t = typing(); await sleep(6000); t.remove();
+  const row8 = document.createElement('div'); row8.className = 'msg';
+  const av8 = document.createElement('img'); av8.src = 'perfil.jpg'; av8.className = 'avatar'; row8.appendChild(av8);
+  const box8 = document.createElement('div'); box8.className = 'bubble them audio-block';
+  box8.innerHTML = '<audio controls src="audio8.mp3"></audio>'; row8.appendChild(box8);
+  chat.appendChild(row8); chat.scrollTop = chat.scrollHeight;
+
+  // Frase final + link novinho (única chance)
+  await sleep(5000);
+  t = typing(); await sleep(6000); t.remove();
+  bubble('Se você sair agora, vai perder a promoção de hoje.  Último aviso, amor:');
+  await sleep(2000);
+  bubble('<b><a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334" style="color:#ff66a3">👉 CLIQUE AQUI AGORA</a></b>');
+
 }
+  
 start();
 </script>
 </body>
