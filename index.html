@@ -84,7 +84,31 @@ font-size:15px
 .them{background:#2a0f3a}
 .me{background:#ff0055;margin-left:auto}
 
-.typing,.mic{
+.typing{
+margin-left:38px;
+display:flex;
+gap:6px
+}
+
+.dot{
+width:10px;
+height:10px;
+background:#ff66a3;
+border-radius:50%;
+animation:jump 1.4s infinite ease-in-out;
+opacity:.3
+}
+
+.dot:nth-child(1){animation-delay:0s}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+
+@keyframes jump{
+0%,80%,100%{transform:translateY(0);opacity:.3}
+40%{transform:translateY(-6px);opacity:1}
+}
+
+.mic{
 margin-left:38px;
 color:#ff66a3;
 font-size:14px
@@ -118,7 +142,8 @@ background:#2a0f3a;
 border:1px solid #ff0055;
 border-radius:20px;
 padding:12px;
-color:#fff
+color:#fff;
+opacity:.6
 }
 
 #sendBtn{
@@ -127,7 +152,8 @@ border:0;
 color:white;
 border-radius:50%;
 padding:12px;
-cursor:pointer
+cursor:not-allowed;
+opacity:.6
 }
 
 button{
@@ -174,8 +200,8 @@ max-height:90%
 <div id="chat"></div>
 
 <div id="footer">
-<input id="msgInput" placeholder="Digite uma mensagem">
-<button id="sendBtn" onclick="sendUser()">➤</button>
+<input id="msgInput" placeholder="Digite uma mensagem" disabled>
+<button id="sendBtn" disabled>➤</button>
 </div>
 
 </div>
@@ -188,26 +214,23 @@ max-height:90%
 
 const chat=document.getElementById("chat")
 const statusTxt=document.getElementById("status")
-
 const sleep=ms=>new Promise(r=>setTimeout(r,ms))
 
 function scroll(){ chat.scrollTop=chat.scrollHeight }
 
-function msg(text,who="them"){
+function msg(text){
  const row=document.createElement("div")
  row.className="msg"
 
- if(who==="them"){
-  const av=document.createElement("img")
-  av.src="perfil.jpg"
-  av.className="avatar"
-  row.appendChild(av)
- }
+ const av=document.createElement("img")
+ av.src="perfil.jpg"
+ av.className="avatar"
 
  const b=document.createElement("div")
- b.className="bubble "+who
+ b.className="bubble them"
  b.innerHTML=text
 
+ row.appendChild(av)
  row.appendChild(b)
  chat.appendChild(row)
  scroll()
@@ -217,7 +240,7 @@ function typing(){
  statusTxt.textContent="digitando..."
  const t=document.createElement("div")
  t.className="typing"
- t.textContent="..."
+ t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>'
  chat.appendChild(t)
  scroll()
  return t
@@ -284,13 +307,6 @@ function openFull(src){
  fs.querySelector("img").src=src
 }
 
-function sendUser(){
- const i=document.getElementById("msgInput")
- if(!i.value.trim())return
- msg(i.value,"me")
- i.value=""
-}
-
 async function waitText(){
  const t=typing()
  await sleep(5000)
@@ -324,7 +340,6 @@ async function start(){
 }
 
 async function choice(){
-
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio1.mp3")
@@ -345,7 +360,6 @@ async function choice(){
 }
 
 async function content(){
-
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio3.mp3")
@@ -359,7 +373,6 @@ async function content(){
 }
 
 async function final(){
-
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio5.mp3")
