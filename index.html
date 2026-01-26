@@ -2,194 +2,301 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Conversa</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Realista</title>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
 :root{
-  --bg:#0a0a0a;
-  --bg-chat:#0f0f0f;
-  --bubble-them:#2a0f3a;
-  --bubble-me:#ff0055;
-  --text:#fff;
-  --sub:#ff66a3;
-  --typing:#ff66a3;
-  --border:#ff0055;
-  --shadow:0 0 12px #ff005588
+--bg:#0a0a0a;
+--chat:#0f0f0f;
+--them:#2a0f3a;
+--me:#ff0055;
+--border:#ff0055;
+--txt:#fff;
+--shadow:0 0 12px #ff005580
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{background:var(--bg);font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center}
-#wrap{width:100%;max-width:420px;height:100%;background:var(--bg);border:1px solid var(--border);box-shadow:var(--shadow);display:flex;flex-direction:column}
-#header{background:#1a1a1a;display:flex;align-items:center;padding:10px 14px;gap:12px;color:var(--text);flex-shrink:0}
+
+*{box-sizing:border-box}
+body{
+margin:0;height:100vh;
+background:var(--bg);
+display:flex;justify-content:center;align-items:center;
+font-family:Inter
+}
+
+#wrap{
+width:100%;max-width:420px;height:100%;
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+display:flex;flex-direction:column
+}
+
+#header{
+background:#1a1a1a;
+padding:10px;
+display:flex;gap:10px;align-items:center;
+color:#fff
+}
+
 #header img{width:44px;height:44px;border-radius:50%;border:2px solid var(--border)}
-#nome{flex:1;font-size:17px;font-weight:600}
-#chat{flex:1 1 auto;background:var(--bg-chat);padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.msg{display:flex;align-items:flex-end;gap:6px}
-.bubble{max-width:72%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.35;box-shadow:var(--shadow)}
-.them{background:var(--bubble-them);color:var(--text);border-bottom-left-radius:6px}
-.me{background:var(--bubble-me);color:#fff;border-bottom-right-radius:6px;margin-left:auto}
+
+#chat{
+flex:1;
+background:var(--chat);
+padding:12px;
+overflow-y:auto;
+scroll-behavior:smooth
+}
+
+.msg{display:flex;gap:8px;margin-bottom:8px}
+
 .avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--border)}
-.typing{margin-left:38px;font-size:28px;font-weight:700;color:var(--typing);letter-spacing:.2em;animation:blink 1s infinite}
-@keyframes blink{50%{opacity:0}}
-#footer{background:#1a1a1a;display:flex;align-items:center;padding:10px;gap:10px;position:sticky;bottom:0;flex-shrink:0}
-#msgInput{flex:1;background:#2a0f3a;border:1px solid var(--border);padding:12px 16px;border-radius:24px;color:var(--text);font-size:16px}
-#sendBtn{background:var(--bubble-me);color:#fff;border:0;padding:12px 14px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:var(--shadow)}
-.audio-block{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bubble-them);border-radius:18px;width:200px}
-audio::-webkit-media-controls-panel{background:var(--bubble-them)}
+
+.bubble{
+max-width:72%;
+padding:10px 14px;
+border-radius:20px;
+font-size:15px;
+box-shadow:var(--shadow)
+}
+
+.them{background:var(--them);color:#fff;border-bottom-left-radius:6px}
+.me{background:var(--me);margin-left:auto;color:#fff;border-bottom-right-radius:6px}
+
+.typing{
+margin-left:40px;
+font-size:22px;
+letter-spacing:.2em;
+animation:pulse 1s infinite;
+color:#ff66a3
+}
+
+@keyframes pulse{50%{opacity:0}}
+
+.loading{
+width:200px;height:120px;
+background:#222;
+border-radius:12px;
+animation:blur 1.5s infinite
+}
+
+@keyframes blur{50%{opacity:.4}}
+
+.audio{
+padding:6px 10px;
+background:var(--them);
+border-radius:18px;
+width:200px
+}
+
+button{
+background:#ff0055;
+color:white;
+border:0;
+padding:8px 14px;
+border-radius:16px;
+cursor:pointer;
+margin:4px
+}
 </style>
 </head>
+
 <body>
 <div id="wrap">
-  <div id="header">
-    <img src="perfil.jpg">
-    <div id="nome">Yasmin Miahira</div>
-  </div>
-  <div id="chat"></div>
-  <div id="footer">
-    <input id="msgInput" placeholder="Digite uma mensagem">
-    <button id="sendBtn" onclick="sendMsg()">➤</button>
-  </div>
+
+<div id="header">
+<img src="perfil.jpg">
+<b>Yasmin Miahira</b>
+</div>
+
+<div id="chat"></div>
+
 </div>
 
 <script>
-const chat=document.getElementById('chat');
-const input=document.getElementById('msgInput');
 
-function bubble(text,who='them'){
-  const row=document.createElement('div');row.className='msg';
-  if(who==='them'){
-    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
-  }
-  const b=document.createElement('div');b.className='bubble '+who;b.innerHTML=text;
-  row.appendChild(b);chat.appendChild(row);chat.scrollTop=chat.scrollHeight;
+const chat = document.getElementById("chat")
+
+const rand = (a,b)=>Math.random()*(b-a)+a
+const wait = ms => new Promise(r=>setTimeout(r,ms))
+
+function scroll(){
+ chat.scrollTop = chat.scrollHeight
 }
-function typing(){
-  const t=document.createElement('div');t.className='typing';t.textContent='...';
-  chat.appendChild(t);chat.scrollTop=chat.scrollHeight;return t;
+
+function row(who){
+ const r=document.createElement("div")
+ r.className="msg"
+ if(who==="them"){
+   const a=document.createElement("img")
+   a.src="perfil.jpg"
+   a.className="avatar"
+   r.appendChild(a)
+ }
+ return r
 }
-function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+async function typing(delay){
+ const t=document.createElement("div")
+ t.className="typing"
+ t.textContent="..."
+ chat.appendChild(t)
+ scroll()
+ await wait(delay)
+ t.remove()
+}
+
+async function typeText(text){
+ const r=row("them")
+ const b=document.createElement("div")
+ b.className="bubble them"
+ r.appendChild(b)
+ chat.appendChild(r)
+ scroll()
+
+ let s=""
+ for(const l of text){
+   s+=l
+   b.textContent=s
+   await wait(rand(20,70))
+ }
+}
+
+async function fakeUser(msg){
+ const r=document.createElement("div")
+ r.className="msg"
+ const b=document.createElement("div")
+ b.className="bubble me"
+ b.textContent=msg
+ r.appendChild(b)
+ chat.appendChild(r)
+ scroll()
+}
+
+async function sendAudio(src){
+ const r=row("them")
+ const b=document.createElement("div")
+ b.className="audio bubble them"
+ b.innerHTML=`<audio controls src="${src}"></audio>`
+ r.appendChild(b)
+ chat.appendChild(r)
+ scroll()
+}
+
+async function sendPhoto(src){
+ const r=row("them")
+ const b=document.createElement("div")
+ b.className="bubble them"
+
+ const load=document.createElement("div")
+ load.className="loading"
+ b.appendChild(load)
+ r.appendChild(b)
+ chat.appendChild(r)
+ scroll()
+
+ await wait(rand(1500,3000))
+
+ load.remove()
+ const img=new Image()
+ img.src=src
+ img.style.maxWidth="220px"
+ img.style.borderRadius="12px"
+ b.appendChild(img)
+ scroll()
+}
 
 async function start(){
-  let t=typing();await sleep(5000);t.remove();
-  bubble('oii, meu amorzinho rs, to aqui sozinha no quarto mas não posso ficar muito.');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('meu noivo chega em 20 min, quer ver uma fotinha?');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<button onclick="escolhe()">Sim, quero ver</button><button onclick="escolhe()">Claro, quero ver</button>');
+
+ await typing(rand(1500,3000))
+ await typeText("oiii amor rs 😅 to aqui sozinha no quarto...")
+
+ await typing(rand(2000,4000))
+ await typeText("meu noivo chega em uns 20 min... quer ver uma fotinha?")
+
+ await wait(1500)
+ await fakeUser("quero sim 😍")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio1.mp3")
+
+ await typing(rand(1500,3000))
+ await sendPhoto("foto1.jpg")
+
+ await typing(rand(1200,2500))
+ await sendPhoto("foto2.jpg")
+
+ await wait(1200)
+ await fakeUser("nossa vc é linda demais 😳")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio2.mp3")
+
+ await typing(rand(2000,4000))
+ await typeText("ultimamente tô me sentindo tão sozinha 😔 ele nem me dá atenção mais...")
+
+ await typing(rand(2000,4000))
+ await typeText("então comecei a vender uns conteúdos meus rsrs 🙈")
+
+ await typing(rand(1500,3000))
+ await typeText("vc teria interesse em ver?")
+
+ await wait(1200)
+ await fakeUser("claro que sim 😍")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio3.mp3")
+
+ await typing(rand(2500,4500))
+ await sendAudio("audio4.mp3")
+
+ await typing(rand(2000,4000))
+ await typeText("então amor... quer gozar bem gostoso comigo hoje? 😈")
+
+ await wait(1200)
+ await fakeUser("quero muito 🔥")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio5.mp3")
+
+ await typing(rand(2000,4000))
+ await typeText("vou deixar o link aqui embaixo pra vc pagar bem baratinho tá 💕")
+
+ await typing(rand(1500,3000))
+ const r=row("them")
+ const b=document.createElement("div")
+ b.className="bubble them"
+ b.innerHTML='<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI</a></b>'
+ r.appendChild(b)
+ chat.appendChild(r)
+ scroll()
+
+ await typing(rand(2000,4000))
+ await typeText("é promoção de hoje só 😘 depois vai aumentar viu")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio6.mp3")
+
+ await typing(rand(3000,5000))
+ await sendAudio("audio7.mp3")
+
+ await typing(rand(2000,4000))
+ await typeText("se sair agora vai perder amorzinho 😭 último aviso")
+
+ await typing(rand(1500,3000))
+ const r2=row("them")
+ const b2=document.createElement("div")
+ b2.className="bubble them"
+ b2.innerHTML='<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI AGORA</a></b>'
+ r2.appendChild(b2)
+ chat.appendChild(r2)
+ scroll()
 }
-async function escolhe(){
-  document.querySelectorAll('button').forEach(b=>b.disabled=true);
 
-  // áudio extra antes das fotos
-  let t=typing(); await sleep(6000); t.remove();
-  const row0=document.createElement('div');row0.className='msg';
-  const av0=document.createElement('img');av0.src='perfil.jpg';av0.className='avatar';row0.appendChild(av0);
-  const box0=document.createElement('div');box0.className='bubble them audio-block';
-  box0.innerHTML='<audio controls src="audio1.mp3"></audio>';row0.appendChild(box0);
-  chat.appendChild(row0); chat.scrollTop=chat.scrollHeight;
+start()
 
-  await sleep(7000); // pausa de 7 s
-
-  // sequência original de fotos
-  for(const f of ['foto1.jpg','foto2.jpg']){
-    const img=new Image();img.src=f;img.style.maxWidth='220px';img.style.borderRadius='12px';
-    const row=document.createElement('div');row.className='msg';
-    const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
-    const b=document.createElement('div');b.className='bubble them';b.appendChild(img);row.appendChild(b);
-    chat.appendChild(row);chat.scrollTop=chat.scrollHeight;await sleep(3000);
-  }
-
-  // NOVO: 5 s depois das fotos, novo áudio
-  await sleep(5000);
-  t=typing();await sleep(6000);t.remove();
-  const rowAudio=document.createElement('div');rowAudio.className='msg';
-  const avAudio=document.createElement('img');avAudio.src='perfil.jpg';avAudio.className='avatar';rowAudio.appendChild(avAudio);
-  const boxAudio=document.createElement('div');boxAudio.className='bubble them audio-block';
-  boxAudio.innerHTML='<audio controls src="audio2.mp3"></audio>';rowAudio.appendChild(boxAudio);
-  chat.appendChild(rowAudio);chat.scrollTop=chat.scrollHeight;
-
-  // restante do script (textos + segundo áudio + link)
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('tem interesse em ver meus conteúdos?');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<button onclick="mostraConteudo()">Sim, quero muito</button><button onclick="mostraConteudo()">Claro que sim</button>');
-}
-async function mostraConteudo(){
-  document.querySelectorAll('button').forEach(b=>b.disabled=true);
-  let t=typing();await sleep(6000);t.remove();
-  const row=document.createElement('div');row.className='msg';
-  const av=document.createElement('img');av.src='perfil.jpg';av.className='avatar';row.appendChild(av);
-  const box=document.createElement('div');box.className='bubble them audio-block';
-  box.innerHTML='<audio controls src="audio3.mp3"></audio>';row.appendChild(box);chat.appendChild(row);
-  chat.scrollTop=chat.scrollHeight;await sleep(5000);
-
-  // SEGUNDO ÁUDIO (audio4)
-  t=typing();await sleep(6000);t.remove();
-  const row4=document.createElement('div');row4.className='msg';
-  const av4=document.createElement('img');av4.src='perfil.jpg';av4.className='avatar';row4.appendChild(av4);
-  const box4=document.createElement('div');box4.className='bubble them audio-block';
-  box4.innerHTML='<audio controls src="audio4.mp3"></audio>';row4.appendChild(box4);chat.appendChild(row4);
-  chat.scrollTop=chat.scrollHeight;await sleep(5000);
-
-  // MENSAGEM DE CONVITE
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('então meu nenem, ta afim de gozar bem gostoso cmg?');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<button onclick="finaliza()">Sim</button><button onclick="finaliza()">Claro</button>');
-}
-async function finaliza(){
-  document.querySelectorAll('button').forEach(b=>b.disabled=true);
-  let t=typing();await sleep(6000);t.remove();
-  const row5=document.createElement('div');row5.className='msg';
-  const av5=document.createElement('img');av5.src='perfil.jpg';av5.className='avatar';row5.appendChild(av5);
-  const box5=document.createElement('div');box5.className='bubble them audio-block';
-  box5.innerHTML='<audio controls src="audio5.mp3"></audio>';row5.appendChild(box5);chat.appendChild(row5);
-  chat.scrollTop=chat.scrollHeight;await sleep(5000);
-
-  // LINK DE PAGAMENTO
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('aqui em baixo vou deixar o link pra voce fazer o pagamento ta amor?');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<b><a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334" style="color:ff66a3">👉 CLIQUE AQUI</a></b>');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('amorzinho, to cobrando um preço bem baratinho, vc ganha e eu ganho, vc vai sair com o pau todo meladinho só de me ver gemendo gostoso.');
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  const row6=document.createElement('div');row6.className='msg';
-  const av6=document.createElement('img');av6.src='perfil.jpg';av6.className='avatar';row6.appendChild(av6);
-  const box6=document.createElement('div');box6.className='bubble them audio-block';
-  box6.innerHTML='<audio controls src="audio6.mp3"></audio>';row6.appendChild(box6);chat.appendChild(row6);
-  chat.scrollTop=chat.scrollHeight;await sleep(5000);
-  t=typing();await sleep(6000);t.remove();
-  const row7=document.createElement('div');row7.className='msg';
-  const av7=document.createElement('img');av7.src='perfil.jpg';av7.className='avatar';row7.appendChild(av7);
-  const box7=document.createElement('div');box7.className='bubble them audio-block';
-  box7.innerHTML='<audio controls src="audio7.mp3"></audio>';row7.appendChild(box7);chat.appendChild(row7);
-  chat.scrollTop=chat.scrollHeight;await sleep(5000);
-  await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('<b><a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334" style="color:ff66a3">👉 CLIQUE AQUI</a></b>');
-  
-  // ÁUDIO 8 – “último chamado”
-  await sleep(2000);
-  t = typing(); await sleep(6000); t.remove();
-  const row8 = document.createElement('div'); row8.className = 'msg';
-  const av8 = document.createElement('img'); av8.src = 'perfil.jpg'; av8.className = 'avatar'; row8.appendChild(av8);
-  const box8 = document.createElement('div'); box8.className = 'bubble them audio-block';
-  box8.innerHTML = '<audio controls src="audio8.mp3"></audio>'; row8.appendChild(box8);
-  chat.appendChild(row8); chat.scrollTop = chat.scrollHeight;
-
-  // Frase final + link novinho (única chance)
-  await sleep(5000);
-  t = typing(); await sleep(6000); t.remove();
-  bubble('Se você sair agora, vai perder a promoção de hoje.  Último aviso, amor:');
-  await sleep(2000);
-  bubble('<b><a href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334" style="color:#ff66a3">👉 CLIQUE AQUI AGORA</a></b>');
-
-}
-  
-start();
 </script>
 </body>
 </html>
