@@ -106,15 +106,13 @@ async function escolhe(){
   const rowAudio=document.createElement('div');rowAudio.className='msg';
   const avAudio=document.createElement('img');avAudio.src='perfil.jpg';avAudio.className='avatar';rowAudio.appendChild(avAudio);
   const boxAudio=document.createElement('div');boxAudio.className='bubble them audio-block';
-  boxAudio.innerHTML='<audio controls src="audio3.mp3"></audio>';rowAudio.appendChild(boxAudio);
+  boxAudio.innerHTML='<audio controls src="audio2.mp3"></audio>';rowAudio.appendChild(boxAudio);
   chat.appendChild(rowAudio);chat.scrollTop=chat.scrollHeight;
 
   // restante do script (textos + segundo áudio + link)
   await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('Vê rapidinho que eu tenho que sair, mas olha, isso é só um pouquinho do que eu tenho a te oferecer.');
+  bubble('ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs');
   await sleep(2000);t=typing();await sleep(6000);t.remove();
-  bubble('Se quiser ver todas as minhas fotos e vídeos que separei especialmente pra você, clique abaixo e adquira o meu pacote VIP.');
-  await sleep(2000);
   for(const a of ['audio2.mp3']){
     t=typing();await sleep(6000);t.remove();
     const row=document.createElement('div');row.className='msg';
