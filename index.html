@@ -4,17 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yasmin Miahira – Real Chat</title>
+
 <style>
+/* ======  SEUS ESTILOS ORIGINAIS  ====== */
 body{margin:0;background:#0b0b0b;font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;height:100vh}
-#app{width:100%;max-width:420px;background:#111;display:flex;flex-direction:column;border:1px solid #ff0055;height:100vh;position:relative}
-# header{…} /* mesmos estilos do seu original */
+#app{width:100%;max-width:420px;background:#111n;display:flex;flex-direction:column;border:1px solid #ff0055;height:100vh;position:relative}
+#header{background:#1a1a1a;padding:10px;display:flex;gap:10px;align-items:center;color:#fff}
+#header img{width:42px;height:42px;border-radius:50%;border:2px solid #ff0055}
+#status{font-size:12px;color:#ff66a3}
 #chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px}
 .msg{display:flex;gap:8px;align-items:flex-end}
 .avatar{width:30px;height:30px;border-radius:50%;border:2px solid #ff0055}
 .bubble{padding:10px 14px;border-radius:18px;max-width:75%;color:#fff;font-size:15px;background:#2a0f3a}
+.typing{margin-left:38px;display:flex;gap:6px}
+.dot{width:12px;height:12px;background:#ff66a3;border-radius:50%;animation:jump 1.4s infinite;opacity:.3}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes jump{0%,80%,100%{transform:translateY(0);opacity:.3}40%{transform:TranslateY(-6px);opacity:1}}
+.mic{margin-left:38px;color:#ff66a3}
+.audio audio{width:200px}
+.chat-img{max-width:220px;border-radius:12px;cursor:pointer}
 #footer{position:fixed;bottom:0;width:100%;max-width:420px;background:#1a1a1a;padding:10px;display:flex;gap:8px}
 #msgInput{flex:1;background:#2a0f3a;border:1px solid #ff0055;border-radius:20px;padding:12px;color:#fff}
 #sendBtn{background:#ff0055;border:0;color:white;border-radius:50%;padding:12px}
+#fullscreen{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center}
+#fullscreen img{max-width:90%;max-height:90%}
 </style>
 </head>
 <body>
@@ -22,7 +36,7 @@ body{margin:0;background:#0b0b0b;font-family:Arial,Helvetica,sans-serif;display:
 <div id="app">
   <div id="header">
     <img src="perfil.jpg">
-    <div><b>Yas Miahira</b><br><span id="status">online agora</span></div>
+    <div><b>Yasmin Miahira</b><br><span id="status">online agora</span></div>
   </div>
   <div id="chat"></div>
   <div id="footer">
@@ -31,8 +45,10 @@ body{margin:0;background:#0b0b0b;font-family:Arial,Helvetica,sans-serif;display:
   </div>
 </div>
 
+<div id="fullscreen" onclick="this.style.display='none'"><img></div>
+
 <script>
-/* ========== UTILS ========== */
+/* ==========  MESMAS FUNÇÕES ORIGINAIS  ========== */
 const chat   = document.getElementById("chat");
 const input  = document.getElementById("msgInput");
 const btn    = document.getElementById("sendBtn");
@@ -40,34 +56,82 @@ const statusTxt = document.getElementById("status");
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const rand  = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
 
-/* ========== ESTADO ========== */
-const STATE = JSON.parse(localStorage.getItem("yasState")) || {
-  step: 0,           // 0=olá, 1=escolha, 2=conteúdo, 3=pgto
-  nome: "",          // nome do visitante
-  jaComprou: false   // evita oferecer 2x
-};
+const link = 'https://seguro.modelosprivacy.club/api/public/shopify?product=1733448833166&store=17334';
 
-/* ========== SALVAR ESTADO ========== */
+/* Estado salvo */
+const STATE = JSON.parse(localStorage.getItem("yasState")) || {step:0,nome:"",jaComprou:false};
 function save(){ localStorage.setItem("yasState",JSON.stringify(STATE)); }
 
-/* ========== ELEMENTOS NA TELA ========== */
-function bubble(who,text){   // who: 'eu' ou 'yas'
+/* Bolha sua (direita) */
+function meuBbl(text){
   const row = document.createElement("div");
   row.className = "msg";
-  if(who==='eu') row.style.justifyContent = "flex-end";
+  row.style.justifyContent = "flex-end";
   row.innerHTML = `
-    ${who翻开yas?'<img class="avatar" src="perfil.jpg">':''}
     <div class="bubble">${text}<div style="font-size:10px;color:#ccc;margin-top:4px;text-align:right">${hora()}</div></div>
-    ${who==='eu'?'<img class="avatar" src="perfil.jpg">':''}`;
+    <img class="avatar" src="perfil.jpg">`;
   chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
 }
 
+/* Bolha dela (esquerda) */
+function yasBbl(text){
+  const row = document.createElement("div");
+  row.className = "msg";
+  row.innerHTML = `
+    <img class="avatar" src="perfil.jpg">
+    <div class="bubble">${text}<div style="font-size:10px;color:#ccc;margin-top:4px;text-align:right">${hora()}</div></div>`;
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* Áudio dela */
+async function yasAudio(src){
+  await fakeLoad();
+  const row = document.createElement("div");
+  row.className = "msg";
+  row.innerHTML = `
+    <img class="avatar" src="perfil.jpg">
+    <div class="bubble audio"><audio controls src="${src}"></audio><div style="font-size:10px;color:#ccc;margin-top:4px;text-align:right">${hora()}</div></div>`;
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* Foto dela */
+function yasFoto(src){
+  const row = document.createElement("div");
+  row.className = "msg";
+  row.innerHTML = `
+    <img class="avatar" src="perfil.jpg">
+    <div class="bubble"><img class="chat-img" src="${src}" onclick="openFull('${src}')"><div style="font-size:10px;color:#ccc;margin-top:4px;text-align:right">${hora()}</div></div>`;
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* Tela cheia */
+function openFull(src){
+  const fs = document.getElementById("fullscreen");
+  fs.style.display = "flex";
+  fs.querySelector("img").src = src;
+}
+
+/* Relógio */
 function hora(){
   const d = new Date();
   return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 }
 
+/* Animação de carregamento áudio */
+async function fakeLoad(){
+  const l = document.createElement("div");
+  l.style.marginLeft = "38px";
+  l.style.color = "#ff66a3";
+  chat.appendChild(l);
+  for(const p of ["██░░░░░░░░","████░░░░░░","██████████"]){ l.innerHTML = "Carregando áudio...<br>"+p; await sleep(600); }
+  l.remove();
+}
+
+/* Digitando... */
 function typing(){
   statusTxt.textContent = "digitando...";
   const t = document.createElement("div");
@@ -78,120 +142,115 @@ function typing(){
   return t;
 }
 
-/* ========== FLUXO CONDICIONAL ========== */
-async function yas(texto){
-  const t = typing(); await sleep(rand(1200,2000)); t.remove();
-  bubble("yas",texto);
-}
-
-async function pergunta(){
-  const t = typing(); await sleep(rand(1200,2000)); t.remove();
-  bubble("yas","Escreve aí em baixo o que você quer fazer…");
-}
-
-/* ========== MOTOR DE RESPOSTA ========== */
-function entende(msg){
-  const lower = msg.toLowerCase();
-  if(lower.includes("nome") || lower.includes("chamo")) {
-    const partes = lower.split(" ");
-    for(let i=0;i<partes.length-1;i++){
-      if(partes[i]==="chamo" || partes[i]==="meu" && partes[i+1]==="nome") {
-        STATE.nome = partes[i+2] || "amor";
-        return true;
-      }
-    }
-    if(lower.includes("sou")) {
-      STATE.nome = lower.split("sou")[1].trim().split(" ")[0];
-      return true;
-    }
-  }
-  return false;
-}
-
-/* ========== AVANÇO DE ETAPA ========== */
+/* ==========  FLUXO CONDICIONAL  ========== */
 async function run(){
   if(STATE.step===0){
     if(!STATE.nome){
-      await yas("oii, meu anjo… como mesmo que você se chama?");
-      pergunta();
+      const t = typing(); await sleep(1500); t.remove();
+      yasBbl("oii, meu anjo… como mesmo que você se chama?");
       return;
     }
     STATE.step=1; save();
-    await yas(`que delícia, ${STATE.nome}… to sozinha no quarto, só de camisola.`);
-    await yas("quer ver uma fotinha minha?");
-    await yas('<button onclick="escolha(1)">Sim, quero ver</button><button onclick="escolha(2)">Claro, quero ver</button>');
+    const t=typing(); await sleep(1500); t.remove();
+    yasBbl(`que delícia, ${STATE.nome}… to sozinha no quarto, só de camisola.`);
+    await sleep(1200);
+    yasBbl("quer ver uma fotinha minha?");
+    await sleep(800);
+    yasBbl('<button onclick="escolha(1)">Sim, quero ver</button><button onclick="escolha(2)">Claro, quero ver</button>');
     return;
   }
 
   if(STATE.step===1){
-    await yas("ultimamente estou me sentindo sozinha… o corno do meu marido não me deixa sair.");
-    await yas("to vendo fotinha proibida pra pagar minhas contas.");
-    await yas("tem interesse em ver meus conteúdos, ${STATE.nome}?");
-    await yas('<button onclick="escolha(3)">Sim, quero muito</button><button onclick="escolha(4)">Claro que sim</button>');
+    const t=typing(); await sleep(1500); t.remove();
+    yasBbl("ultimamente estou me sentindo sozinha… o corno do meu marido não me deixa sair.");
+    await sleep(1200);
+    yasBbl("to vendo fotinha proibida pra pagar minhas contas.");
+    await sleep(800);
+    yasBbl(`tem interesse em ver meus conteúdos, ${STATE.nome}?`);
+    await sleep(800);
+    yasBbl('<button onclick="escolha(3)">Sim, quero muito</button><button onclick="escolha(4)">Claro que sim</button>');
     return;
   }
 
   if(STATE.step===2){
-    await yas("então, meu neném… tá afim de gozar bem gostoso cmg?");
-    await yas('<button onclick="escolha(5)">Sim</button><button onclick="escolha(6)">Claro</button>');
+    const t=typing(); await sleep(1500); t.remove();
+    yasBbl("então, meu neném… tá afim de gozar bem gostoso cmg?");
+    await sleep(800);
+    yasBbl('<button onclick="escolha(5)">Sim</button><button onclick="escolha(6)">Claro</button>');
     return;
   }
 
   if(STATE.step===3){
-    if(STATE.jaComprou){
-      await yas("você já garantiu seu acesso, ${STATE.nome}… só entrar no link que mandei!");
-      return;
-    }
-    await yas("vou deixar o link aqui embaixo pra você fazer o pagamento, tá amor?");
-    await yas(`<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733448833166&store=17334" target="_blank">👉 CLIQUE AQUI</a></b>`);
-    await yas("Se você sair agora, perde a promoção de hoje… último aviso, ${STATE.nome}.");
-    STATE.jaComprou = true; save();
-    return;
+    if(STATE.jaComprou){ yasBbl("você já garantiu seu acesso, ${STATE.nome}… só entrar no link que mandei!"); return; }
+    const t=typing(); await sleep(1500); t.remove();
+    yasBbl("vou deixar o link aqui embaixo pra você fazer o pagamento, tá amor?");
+    await yasAudio("audio6.mp3");
+    yasBbl(`<b><a style="color:#ff66a3" href="${link}" target="_blank">👉 CLIQUE AQUI</a></b>`);
+    await yasAudio("audio7.mp3");
+    yasBbl(`<b><a style="color:#ff66a3" href="${link}" target="_blank">👉 CLIQUE AQUI</a></b>`);
+    await yasAudio("audio8.mp3");
+    yasBbl("Se você sair agora, vai perder a promoção de hoje. Último aviso, amor:");
+    STATE.jaComprou=true; save();
   }
 }
 
-/* ========== BOTÕES FAKE (mantém fluxo) ========== */
+/* Botões fake */
 window.escolha = async function(n){
   chat.querySelectorAll("button").forEach(b=>b.disabled=true);
-  if(STATE.step===1) { STATE.step=2; save(); await run(); return; }
-  if(STATE.step===2) { STATE.step=3; save(); await run(); return; }
+  if(STATE.step===1){ STATE.step=2; save(); await run(); return; }
+  if(STATE.step===2){ STATE.step=3; save(); await run(); return; }
 }
 
-/* ========== ENVIO DE MENSAGEM ========== */
+/* Entende nome */
+function entendeNome(txt){
+  const l = txt.toLowerCase();
+  if(l.includes("chamo") || l.includes("meu nome")){
+    STATE.nome = l.split(/chamo|nome/)[1]?.trim().split(" ")[0] || "amor";
+    return true;
+  }
+  if(l.includes("sou")){
+    STATE.nome = l.split("sou")[1]?.trim().split(" ")[0] || "amor";
+    return true;
+  }
+  return false;
+}
+
+/* Envia sua mensagem */
 btn.onclick = async ()=>{
   const txt = input.value.trim();
   if(!txt) return;
-  bubble("eu",txt);
+  meuBbl(txt);
   input.value="";
 
-  if(STATE.step===0 && entende(txt)){
+  if(STATE.step===0 && !STATE.nome && entendeNome(txt)){
     save();
-    await sleep(600);
+    const t=typing(); await sleep(800); t.remove();
     run();
     return;
   }
 
-  /* respostas genéricas para qualquer outra coisa */
+  /* respostas genéricas */
   const generic = [
     "hummm, que tesão… continua…",
     "você é bem safado, ${STATE.nome}… gosto assim!",
     "me conta mais, me deixa louca…",
     "quero ver até onde você vai…"
   ];
-  await yas(generic[rand(0,generic.length-1)]);
+  const t=typing(); await sleep(1000); t.remove();
+  yasBbl(generic[rand(0,generic.length-1)]);
 };
 
 input.addEventListener("keydown",e=>{if(e.key==="Enter") btn.onclick();});
 
-/* ========== INICIA ========== */
+/* Início */
 (async ()=>{
   if(!STATE.nome) await run();
   else {
-    await yas("você voltou… senti saudades, ${STATE.nome}!");
+    const t=typing(); await sleep(800); t.remove();
+    yasBbl("você voltou… senti saudades, ${STATE.nome}!");
     await run();
   }
 })();
 </script>
-
 </body>
 </html>
