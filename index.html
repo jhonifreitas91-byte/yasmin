@@ -82,7 +82,6 @@ font-size:15px
 }
 
 .them{background:#2a0f3a}
-.me{background:#ff0055;margin-left:auto}
 
 .typing{
 margin-left:38px;
@@ -95,11 +94,10 @@ width:10px;
 height:10px;
 background:#ff66a3;
 border-radius:50%;
-animation:jump 1.4s infinite ease-in-out;
+animation:jump 1.4s infinite;
 opacity:.3
 }
 
-.dot:nth-child(1){animation-delay:0s}
 .dot:nth-child(2){animation-delay:.2s}
 .dot:nth-child(3){animation-delay:.4s}
 
@@ -114,9 +112,7 @@ color:#ff66a3;
 font-size:14px
 }
 
-.audio audio{
-width:200px
-}
+.audio audio{width:200px}
 
 .chat-img{
 max-width:220px;
@@ -132,8 +128,12 @@ max-width:420px;
 background:#1a1a1a;
 padding:10px;
 display:flex;
-gap:8px;
-box-sizing:border-box
+gap:8px
+}
+
+#msgInput,#sendBtn{
+opacity:.6;
+cursor:not-allowed
 }
 
 #msgInput{
@@ -142,8 +142,7 @@ background:#2a0f3a;
 border:1px solid #ff0055;
 border-radius:20px;
 padding:12px;
-color:#fff;
-opacity:.6
+color:#fff
 }
 
 #sendBtn{
@@ -151,9 +150,7 @@ background:#ff0055;
 border:0;
 color:white;
 border-radius:50%;
-padding:12px;
-cursor:not-allowed;
-opacity:.6
+padding:12px
 }
 
 button{
@@ -215,8 +212,9 @@ max-height:90%
 const chat=document.getElementById("chat")
 const statusTxt=document.getElementById("status")
 const sleep=ms=>new Promise(r=>setTimeout(r,ms))
+const link='https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334'
 
-function scroll(){ chat.scrollTop=chat.scrollHeight }
+function scroll(){chat.scrollTop=chat.scrollHeight}
 
 function msg(text){
  const row=document.createElement("div")
@@ -328,7 +326,6 @@ async function waitImage(){
 }
 
 async function start(){
-
  await waitText()
  msg("oii, meu amorzinho rs, to aqui sozinha no quarto mas não posso ficar muito.")
 
@@ -380,11 +377,16 @@ async function final(){
  await waitText()
  msg("aqui em baixo vou deixar o link pra voce fazer o pagamento ta amor?")
 
- await waitText()
- msg('<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI</a></b>')
-
  await waitAudio(); sendAudio("audio6.mp3")
+
+ await waitText()
+ msg(`<b><a style="color:#ff66a3" href="${link}">👉 CLIQUE AQUI</a></b>`)
+
  await waitAudio(); sendAudio("audio7.mp3")
+
+ await waitText()
+ msg(`<b><a style="color:#ff66a3" href="${link}">👉 CLIQUE AQUI</a></b>`)
+
  await waitAudio(); sendAudio("audio8.mp3")
 
  await waitText()
