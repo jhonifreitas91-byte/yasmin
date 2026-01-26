@@ -1,138 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Chat Realista</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-:root{
---bg:#0b0b0b;
---chat:#111;
---them:#2a0f3a;
---me:#ff0055;
---border:#ff0055;
---txt:#fff;
---shadow:0 0 12px #ff005580
-}
-
-*{box-sizing:border-box;margin:0}
-html,body{height:100%}
-
 body{
-background:var(--bg);
+margin:0;
+background:#0b0b0b;
+font-family:Arial,Helvetica,sans-serif;
 display:flex;
 justify-content:center;
-align-items:center;
-font-family:Inter
+height:100vh
 }
 
-#wrap{
+#app{
 width:100%;
 max-width:420px;
-height:100%;
+background:#111;
 display:flex;
 flex-direction:column;
-border:1px solid var(--border);
-box-shadow:var(--shadow)
+border:1px solid #ff0055
 }
 
 #header{
 background:#1a1a1a;
 padding:10px;
 display:flex;
-align-items:center;
 gap:10px;
+align-items:center;
 color:#fff
 }
 
 #header img{
-width:42px;height:42px;
+width:42px;
+height:42px;
 border-radius:50%;
-border:2px solid var(--border)
+border:2px solid #ff0055
+}
+
+#status{
+font-size:12px;
+color:#ff66a3
 }
 
 #chat{
 flex:1;
-background:var(--chat);
-padding:12px;
 overflow-y:auto;
+padding:12px;
 display:flex;
 flex-direction:column;
 gap:10px;
 scroll-behavior:smooth
 }
 
-.msg{display:flex;gap:8px;align-items:flex-end}
+.msg{
+display:flex;
+gap:8px;
+align-items:flex-end
+}
 
 .avatar{
-width:30px;height:30px;
+width:30px;
+height:30px;
 border-radius:50%;
-border:2px solid var(--border)
+border:2px solid #ff0055
 }
 
 .bubble{
-max-width:72%;
 padding:10px 14px;
-border-radius:20px;
-font-size:15px;
-box-shadow:var(--shadow)
+border-radius:18px;
+max-width:75%;
+color:#fff;
+font-size:15px
 }
 
-.them{background:var(--them);color:#fff;border-bottom-left-radius:6px}
-.me{background:var(--me);color:#fff;border-bottom-right-radius:6px;margin-left:auto}
+.them{background:#2a0f3a}
+.me{background:#ff0055;margin-left:auto}
 
-.typing{
+.typing,.mic{
 margin-left:38px;
-font-size:26px;
-color:#ff66a3;
-letter-spacing:.2em;
-animation:blink 1s infinite
+color:#ff66a3
 }
 
-@keyframes blink{50%{opacity:0}}
-
-.mic{
-margin-left:38px;
-font-size:22px;
-color:#ff66a3;
-animation:pulse 1s infinite
+.audio audio{
+width:200px
 }
 
-@keyframes pulse{50%{opacity:.3}}
+.chat-img{
+max-width:220px;
+border-radius:12px;
+cursor:pointer
+}
 
 #footer{
 background:#1a1a1a;
 padding:10px;
 display:flex;
-gap:10px
+gap:8px
 }
 
 #msgInput{
 flex:1;
 background:#2a0f3a;
-border:1px solid var(--border);
-border-radius:22px;
-padding:12px 14px;
+border:1px solid #ff0055;
+border-radius:20px;
+padding:12px;
 color:#fff
 }
 
 #sendBtn{
-background:var(--me);
+background:#ff0055;
 border:0;
-color:#fff;
-padding:12px;
+color:white;
 border-radius:50%;
+padding:12px;
 cursor:pointer
-}
-
-.audio{
-background:var(--them);
-padding:6px 10px;
-border-radius:18px;
-width:200px
 }
 
 button{
@@ -144,45 +129,86 @@ border-radius:16px;
 margin:4px;
 cursor:pointer
 }
+
+#fullscreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.9);
+display:none;
+justify-content:center;
+align-items:center
+}
+
+#fullscreen img{
+max-width:90%;
+max-height:90%
+}
 </style>
 </head>
 
 <body>
 
-<div id="wrap">
+<div id="app">
 
 <div id="header">
 <img src="perfil.jpg">
-<b>Yasmin Miahira</b>
+<div>
+<b>Yasmin</b><br>
+<span id="status">online agora</span>
+</div>
 </div>
 
 <div id="chat"></div>
 
 <div id="footer">
-<input id="msgInput" placeholder="Digite uma mensagem">
-<button id="sendBtn" onclick="sendMsg()">➤</button>
+<input id="msgInput" placeholder="Digite...">
+<button id="sendBtn" onclick="sendUser()">➤</button>
 </div>
 
 </div>
+
+<div id="fullscreen" onclick="this.style.display='none'">
+<img>
+</div>
+
+<audio id="notif" src="notif.mp3"></audio>
 
 <script>
 
 const chat=document.getElementById("chat")
-const input=document.getElementById("msgInput")
+const statusTxt=document.getElementById("status")
+const notif=document.getElementById("notif")
 
 const sleep=ms=>new Promise(r=>setTimeout(r,ms))
 
-function scroll(){chat.scrollTop=chat.scrollHeight}
+function vibrate(){
+ if(navigator.vibrate) navigator.vibrate(80)
+}
 
-function bubble(text,who="them"){
+function playNotif(){
+ notif.play().catch(()=>{})
+}
+
+function scroll(){
+ chat.scrollTop=chat.scrollHeight
+}
+
+function setStatus(t){
+ statusTxt.textContent=t
+}
+
+function msg(text,who="them"){
  const row=document.createElement("div")
  row.className="msg"
 
  if(who==="them"){
-   const av=document.createElement("img")
-   av.src="perfil.jpg"
-   av.className="avatar"
-   row.appendChild(av)
+  const av=document.createElement("img")
+  av.src="perfil.jpg"
+  av.className="avatar"
+  row.appendChild(av)
  }
 
  const b=document.createElement("div")
@@ -191,10 +217,14 @@ function bubble(text,who="them"){
 
  row.appendChild(b)
  chat.appendChild(row)
+
+ playNotif()
+ vibrate()
  scroll()
 }
 
 function typing(){
+ setStatus("digitando...")
  const t=document.createElement("div")
  t.className="typing"
  t.textContent="..."
@@ -204,21 +234,18 @@ function typing(){
 }
 
 function mic(){
+ setStatus("gravando áudio...")
  const m=document.createElement("div")
  m.className="mic"
- m.textContent="🎤 gravando..."
+ m.textContent="🎤 gravando áudio..."
  chat.appendChild(m)
  scroll()
  return m
 }
 
-function sendMsg(){
- if(!input.value.trim()) return
- bubble(input.value,"me")
- input.value=""
-}
-
 function sendAudio(src){
+ setStatus("online agora")
+
  const row=document.createElement("div")
  row.className="msg"
 
@@ -233,14 +260,14 @@ function sendAudio(src){
  row.appendChild(av)
  row.appendChild(box)
  chat.appendChild(row)
+
+ playNotif()
+ vibrate()
  scroll()
 }
 
 function sendPhoto(src){
- const img=new Image()
- img.src=src
- img.style.maxWidth="220px"
- img.style.borderRadius="12px"
+ setStatus("online agora")
 
  const row=document.createElement("div")
  row.className="msg"
@@ -249,20 +276,42 @@ function sendPhoto(src){
  av.src="perfil.jpg"
  av.className="avatar"
 
+ const img=document.createElement("img")
+ img.src=src
+ img.className="chat-img"
+ img.onclick=()=>openFull(src)
+
  const b=document.createElement("div")
  b.className="bubble them"
-
  b.appendChild(img)
+
  row.appendChild(av)
  row.appendChild(b)
  chat.appendChild(row)
+
+ playNotif()
+ vibrate()
  scroll()
+}
+
+function openFull(src){
+ const fs=document.getElementById("fullscreen")
+ fs.style.display="flex"
+ fs.querySelector("img").src=src
+}
+
+function sendUser(){
+ const i=document.getElementById("msgInput")
+ if(!i.value.trim())return
+ msg(i.value,"me")
+ i.value=""
 }
 
 async function waitText(){
  const t=typing()
  await sleep(5000)
  t.remove()
+ setStatus("online agora")
 }
 
 async function waitAudio(){
@@ -275,91 +324,66 @@ async function waitImage(){
  const t=typing()
  await sleep(7000)
  t.remove()
+ setStatus("online agora")
 }
 
 async function start(){
 
  await waitText()
- bubble("oii meu amorzinho rs 😅 to aqui sozinha no quarto mas não posso ficar muito")
+ msg("oii amor 😅 tô sozinha agora")
 
  await waitText()
- bubble("meu noivo chega em 20 min... quer ver uma fotinha?")
+ msg("quer ver umas fotinhas minhas?")
 
  await waitText()
- bubble('<button onclick="escolhe()">Sim, quero ver</button><button onclick="escolhe()">Claro, quero ver</button>')
+ msg('<button onclick="choice()">Sim</button><button onclick="choice()">Quero ver</button>')
 }
 
-async function escolhe(){
+async function choice(){
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
- await waitAudio()
- sendAudio("audio1.mp3")
+ await waitAudio(); sendAudio("audio1.mp3")
 
- await waitImage()
- sendPhoto("foto1.jpg")
+ await waitImage(); sendPhoto("foto1.jpg")
+ await waitImage(); sendPhoto("foto2.jpg")
 
- await waitImage()
- sendPhoto("foto2.jpg")
+ await waitAudio(); sendAudio("audio2.mp3")
 
  await waitText()
- bubble("ultimamente tô me sentindo sozinha... o corno do meu marido não me deixa sair de casa 😔")
+ msg("ando muito sozinha ultimamente 😔")
 
  await waitText()
- bubble("então a única opção agora é vender foto da minha bucetinha rsrs 🙈")
+ msg("quer ver meus conteúdos exclusivos?")
 
  await waitText()
- bubble("tem interesse em ver meus conteúdos?")
-
- await waitText()
- bubble('<button onclick="mostraConteudo()">Sim, quero muito</button><button onclick="mostraConteudo()">Claro que sim</button>')
+ msg('<button onclick="content()">Quero</button><button onclick="content()">Claro</button>')
 }
 
-async function mostraConteudo(){
+async function content(){
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
- await waitAudio()
- sendAudio("audio3.mp3")
-
- await waitAudio()
- sendAudio("audio4.mp3")
+ await waitAudio(); sendAudio("audio3.mp3")
+ await waitAudio(); sendAudio("audio4.mp3")
 
  await waitText()
- bubble("então meu neném... tá afim de gozar bem gostoso comigo? 😈")
+ msg("vou te mandar o link amor ❤️")
+
+ await waitAudio(); sendAudio("audio5.mp3")
 
  await waitText()
- bubble('<button onclick="finaliza()">Sim</button><button onclick="finaliza()">Claro</button>')
-}
+ msg('<b><a style="color:#ff66a3" href="#">👉 PAGAR AGORA</a></b>')
 
-async function finaliza(){
- document.querySelectorAll("button").forEach(b=>b.disabled=true)
-
- await waitAudio()
- sendAudio("audio5.mp3")
+ await waitAudio(); sendAudio("audio6.mp3")
+ await waitAudio(); sendAudio("audio7.mp3")
+ await waitAudio(); sendAudio("audio8.mp3")
 
  await waitText()
- bubble("vou deixar o link aqui embaixo pra você fazer o pagamento tá amor ❤️")
-
- await waitText()
- bubble('<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI</a></b>')
-
- await waitText()
- bubble("tô cobrando baratinho, vc ganha e eu ganho 😘")
-
- await waitAudio()
- sendAudio("audio6.mp3")
-
- await waitAudio()
- sendAudio("audio7.mp3")
-
- await waitText()
- bubble("se sair agora vai perder a promoção de hoje 😭 último aviso")
-
- await waitText()
- bubble('<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI AGORA</a></b>')
+ msg("última chance hoje 😭")
 }
 
 start()
 
 </script>
+
 </body>
 </html>
