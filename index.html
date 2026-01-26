@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Chat Realista</title>
+<title>Chat</title>
 
 <style>
 body{
@@ -22,7 +22,9 @@ max-width:420px;
 background:#111;
 display:flex;
 flex-direction:column;
-border:1px solid #ff0055
+border:1px solid #ff0055;
+height:100vh;
+position:relative
 }
 
 #header{
@@ -31,7 +33,8 @@ padding:10px;
 display:flex;
 gap:10px;
 align-items:center;
-color:#fff
+color:#fff;
+flex-shrink:0
 }
 
 #header img{
@@ -53,6 +56,7 @@ padding:12px;
 display:flex;
 flex-direction:column;
 gap:10px;
+padding-bottom:80px;
 scroll-behavior:smooth
 }
 
@@ -82,7 +86,8 @@ font-size:15px
 
 .typing,.mic{
 margin-left:38px;
-color:#ff66a3
+color:#ff66a3;
+font-size:14px
 }
 
 .audio audio{
@@ -96,10 +101,15 @@ cursor:pointer
 }
 
 #footer{
+position:fixed;
+bottom:0;
+width:100%;
+max-width:420px;
 background:#1a1a1a;
 padding:10px;
 display:flex;
-gap:8px
+gap:8px;
+box-sizing:border-box
 }
 
 #msgInput{
@@ -156,7 +166,7 @@ max-height:90%
 <div id="header">
 <img src="perfil.jpg">
 <div>
-<b>Yasmin</b><br>
+<b>Yasmin Miahira</b><br>
 <span id="status">online agora</span>
 </div>
 </div>
@@ -164,7 +174,7 @@ max-height:90%
 <div id="chat"></div>
 
 <div id="footer">
-<input id="msgInput" placeholder="Digite...">
+<input id="msgInput" placeholder="Digite uma mensagem">
 <button id="sendBtn" onclick="sendUser()">➤</button>
 </div>
 
@@ -174,31 +184,14 @@ max-height:90%
 <img>
 </div>
 
-<audio id="notif" src="notif.mp3"></audio>
-
 <script>
 
 const chat=document.getElementById("chat")
 const statusTxt=document.getElementById("status")
-const notif=document.getElementById("notif")
 
 const sleep=ms=>new Promise(r=>setTimeout(r,ms))
 
-function vibrate(){
- if(navigator.vibrate) navigator.vibrate(80)
-}
-
-function playNotif(){
- notif.play().catch(()=>{})
-}
-
-function scroll(){
- chat.scrollTop=chat.scrollHeight
-}
-
-function setStatus(t){
- statusTxt.textContent=t
-}
+function scroll(){ chat.scrollTop=chat.scrollHeight }
 
 function msg(text,who="them"){
  const row=document.createElement("div")
@@ -217,14 +210,11 @@ function msg(text,who="them"){
 
  row.appendChild(b)
  chat.appendChild(row)
-
- playNotif()
- vibrate()
  scroll()
 }
 
 function typing(){
- setStatus("digitando...")
+ statusTxt.textContent="digitando..."
  const t=document.createElement("div")
  t.className="typing"
  t.textContent="..."
@@ -234,7 +224,7 @@ function typing(){
 }
 
 function mic(){
- setStatus("gravando áudio...")
+ statusTxt.textContent="gravando áudio..."
  const m=document.createElement("div")
  m.className="mic"
  m.textContent="🎤 gravando áudio..."
@@ -244,7 +234,7 @@ function mic(){
 }
 
 function sendAudio(src){
- setStatus("online agora")
+ statusTxt.textContent="online agora"
 
  const row=document.createElement("div")
  row.className="msg"
@@ -260,14 +250,11 @@ function sendAudio(src){
  row.appendChild(av)
  row.appendChild(box)
  chat.appendChild(row)
-
- playNotif()
- vibrate()
  scroll()
 }
 
 function sendPhoto(src){
- setStatus("online agora")
+ statusTxt.textContent="online agora"
 
  const row=document.createElement("div")
  row.className="msg"
@@ -288,9 +275,6 @@ function sendPhoto(src){
  row.appendChild(av)
  row.appendChild(b)
  chat.appendChild(row)
-
- playNotif()
- vibrate()
  scroll()
 }
 
@@ -311,7 +295,7 @@ async function waitText(){
  const t=typing()
  await sleep(5000)
  t.remove()
- setStatus("online agora")
+ statusTxt.textContent="online agora"
 }
 
 async function waitAudio(){
@@ -324,22 +308,23 @@ async function waitImage(){
  const t=typing()
  await sleep(7000)
  t.remove()
- setStatus("online agora")
+ statusTxt.textContent="online agora"
 }
 
 async function start(){
 
  await waitText()
- msg("oii amor 😅 tô sozinha agora")
+ msg("oii, meu amorzinho rs, to aqui sozinha no quarto mas não posso ficar muito.")
 
  await waitText()
- msg("quer ver umas fotinhas minhas?")
+ msg("meu noivo chega em 20 min, quer ver uma fotinha?")
 
  await waitText()
- msg('<button onclick="choice()">Sim</button><button onclick="choice()">Quero ver</button>')
+ msg('<button onclick="choice()">Sim, quero ver</button><button onclick="choice()">Claro, quero ver</button>')
 }
 
 async function choice(){
+
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio1.mp3")
@@ -350,35 +335,47 @@ async function choice(){
  await waitAudio(); sendAudio("audio2.mp3")
 
  await waitText()
- msg("ando muito sozinha ultimamente 😔")
+ msg("ultimamente estou me sentindo sozinha, o corno do meu marido não me deixa sair de casa e estou sem trabalhar, então a unica opção agora é vender foto da minha bucetinha rsrsrs")
 
  await waitText()
- msg("quer ver meus conteúdos exclusivos?")
+ msg("tem interesse em ver meus conteúdos?")
 
  await waitText()
- msg('<button onclick="content()">Quero</button><button onclick="content()">Claro</button>')
+ msg('<button onclick="content()">Sim, quero muito</button><button onclick="content()">Claro que sim</button>')
 }
 
 async function content(){
+
  document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio3.mp3")
  await waitAudio(); sendAudio("audio4.mp3")
 
  await waitText()
- msg("vou te mandar o link amor ❤️")
+ msg("então meu nenem, ta afim de gozar bem gostoso cmg?")
+
+ await waitText()
+ msg('<button onclick="final()">Sim</button><button onclick="final()">Claro</button>')
+}
+
+async function final(){
+
+ document.querySelectorAll("button").forEach(b=>b.disabled=true)
 
  await waitAudio(); sendAudio("audio5.mp3")
 
  await waitText()
- msg('<b><a style="color:#ff66a3" href="#">👉 PAGAR AGORA</a></b>')
+ msg("aqui em baixo vou deixar o link pra voce fazer o pagamento ta amor?")
+
+ await waitText()
+ msg('<b><a style="color:#ff66a3" href="https://seguro.modelosprivacy.club/api/public/shopify?product=1733412255316&store=17334">👉 CLIQUE AQUI</a></b>')
 
  await waitAudio(); sendAudio("audio6.mp3")
  await waitAudio(); sendAudio("audio7.mp3")
  await waitAudio(); sendAudio("audio8.mp3")
 
  await waitText()
- msg("última chance hoje 😭")
+ msg("Se você sair agora, vai perder a promoção de hoje. Último aviso, amor:")
 }
 
 start()
